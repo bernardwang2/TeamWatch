@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>TeamWatch</title>
+	<link rel="stylesheet" href="main.css">
+</head>
+
+
+<body onload="loadGame()">
+    <header>
+        <nav class="navbar">
+
+            <div class="col-xs-12 team-name">
+                <a href="index.html">
+                    <img src="http://cdn.onlinewebfonts.com/svg/img_248752.png" alt="log out" class="settings">
+                </a>
+                My Teams &#9660;
+            </div>
+
+            <a class="col-xs-4 btn btn-primary" href="home.html">Home</a>
+            <a class="col-xs-4 btn btn-primary active" href="schedule.html">Schedule</a>
+            <a class="col-xs-4 btn btn-primary" href="players.html">Players</a>
+        </nav>				
+    </header>
+
+    <h4 class="text-center">October 1, 2017, 3:00 PM</h4>
+    <h5 class="text-center">Philadelphia Community Park (Home)</h5>
+    <h3 class="text-center">My Team vs. Their Team</h3>
+    <div class="team-buttons">
+        <button class="col-xs-6 text-center btn btn-primary">TEAM 1</button>
+        <button class="col-xs-6 text-center btn btn-primary">TEAM 2</button>
+    </div>
+
+    <div class="table-responsive overflow">   
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="headcol">Player</th>
+                    <th>Goals</th>
+                    <th>Fouls</th>
+                    <th>Yellow Cards</th>
+                    <th>Red Cards</th>
+                    <th>Shot on Goals</th>
+                    <th>Corner Kicks</th>
+                    <th>Goal Kicks</th>
+                    <th>Penality Kicks</th>
+                    <th>Throws-ins</th>
+                    <th>Games Played</th>
+                </tr>
+            </thead>
+
+            <tbody id="game_list">
+            </tbody>
+            
+        </table>
+    </div>
+
+    <footer class="footer" style="background:#337ab7;">
+            <div>
+                <img src='img/soccer_icon.png' alt="soccer ball">
+                <span class="footer_text">
+                    TeamWatch
+                </span>
+            </div>
+    </footer>
+
+    <script src="main.js"></script>
+    
+</body>
+
+</html>

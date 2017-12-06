@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>TeamWatch</title>
+	<link rel="stylesheet" href="main.css">
+</head>
+
+<body onload="showPlayer()">
+    <header>
+        <nav class="navbar">
+
+            <div class="col-xs-12 team-name">
+                <a href="index.html">
+                    <img src="http://cdn.onlinewebfonts.com/svg/img_248752.png" alt="log out" class="settings">
+                </a>
+                My Teams &#9660;
+            </div>
+
+            <a class="col-xs-4 btn btn-primary" href="home.html">Home</a>
+            <a class="col-xs-4 btn btn-primary" href="schedule.html">Schedule</a>
+            <a class="col-xs-4 btn btn-primary active" href="players.html">Players</a>
+        </nav>			
+    </header>
+
+    <h1 class="text-center">PLAYERS<a href="add_player.html" class="plus_button">&#43;</a></h1>
+    <div class="table-responsive overflow">          
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="headcol">Picture</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Position</th>
+                    <th> </th>
+                    <th> </th>
+                    <th> </th>
+                </tr>
+            </thead>
+            <tbody class="players" id="players_list">
+            </tbody>
+        </table>
+    </div><br>
+
+    <footer class="footer" style="background:#337ab7;">
+            <div class="container">
+                <img src='img/soccer_icon.png' alt="soccer ball">
+                <span class="footer_text">
+                    TeamWatch
+                </span>
+            </div>
+    </footer>
+    <script src="main.js"></script>
+</body>
+
+</html>

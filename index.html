@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>TeamWatch</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+	<h1 class="title_text">TeamWatch</h1>
+	<img src="https://image.flaticon.com/icons/svg/53/53283.svg" alt="soccer ball" id="login_ball">
+	
+    <script>
+    </script>
+    
+    <form method="post" name="loginform" id="loginform">
+		<input type="text" name="username" id="username" placeholder="username" class="form-control">
+		<input type="password" name="password" id="password" placeholder="password" class="form-control"><br>
+
+		<div class="submit_buttons">
+			<input type="button" class="btn btn-primary" value="Login" id ="submit" onclick="login()"/> <br>
+			<input type="button" value="New User" onclick="location.href='signup.html';" class="btn btn-primary" id="newuser"/>
+		</div>
+	</form><br>
+	
+	<footer class="footer" style="background:#337ab7;">
+			<div class="container">
+				<img src='img/soccer_icon.png' alt="soccer ball">
+				<span class="text-muted" style="color:white">
+					TeamWatch
+				</span>
+			</div>
+	</footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

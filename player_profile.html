@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>TeamWatch</title>
+	<link rel="stylesheet" href="main.css">
+</head>
+
+<body onload="loadPlayerProfile()">
+    <header>
+        <nav class="navbar">
+
+            <div class="col-xs-12 team-name">
+                <a href="index.html">
+                    <img src="http://cdn.onlinewebfonts.com/svg/img_248752.png" alt="log out" class="settings">
+                </a>
+                My Teams &#9660;
+            </div>
+
+            <a class="col-xs-4 btn btn-primary" href="home.html">Home</a>
+            <a class="col-xs-4 btn btn-primary" href="schedule.html">Schedule</a>
+            <a class="col-xs-4 btn btn-primary active" href="players.html">Players</a>
+        </nav>			
+    </header>
+
+    <div class="text-center" id="player_info">
+    </div>
+    
+    <hr>
+    <div class="table-responsive player_stats">          
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Goals</th>
+                    <th>Fouls</th>
+                    <th>Yellow Cards</th>
+                    <th>Red Cards</th>
+                    <th>Shot on Goals</th>
+                    <th>Corner Kicks</th>
+                    <th>Goal Kicks</th>
+                    <th>Penality Kicks</th>
+                    <th>Throws-ins</th>
+                    <th>Games Played</th>
+                </tr>
+            </thead>
+            <tbody id="player-profile-body">
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="text-center">
+        <a class="btn btn-primary" href="edit_player_stats.html">Edit Player Stats</a>
+    </div><br>
+    
+    <footer class="footer" style="background:#337ab7;">
+            <div class="container">
+                <img src='img/soccer_icon.png' alt="soccer ball">
+                <span class="footer_text">
+                    TeamWatch
+                </span>
+            </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

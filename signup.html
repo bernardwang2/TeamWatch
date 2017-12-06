@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>TeamWatch</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="main.css">
+</head>
+    
+<body>
+    <h1 class="title_text">Sign Up</h1>
+    <form method="post" name="sign_form" id="sign_form">
+        <input type="text" name="firstName" id="sign_firstName" placeholder="First Name" class="form-control">
+        <input type="text" name="lastName" id="sign_lastName" placeholder="Last Name" class="form-control">
+        <input type="text" name="username" id="sign_username" placeholder="Username" class="form-control">  
+        <input type="password" name="password" id="sign_password" placeholder="Password" class="form-control">
+        <input type="password" name="password" id="sign_confirmPassword" placeholder="Confirm Password" class="form-control"><br>
+
+        <h3 style="margin-top: 0">Who are you?</h3>
+
+        <div class="role_input" id="role_input">
+            <input type="radio" name="role" value="Player" id="iden"> Player<br>
+            <input type="radio" name="role" value="Parent" id="iden"> Parent<br>
+            <input type="radio" name="role" value="Coach" ide="iden"> Coach<br>
+            <a type="button" class="btn btn-primary" value="Submit" id ="submit" onclick="signUp()">Submit</a>
+            <a href="index.html" class="btn btn-primary" id="back">Back</a>
+        </div>
+    </form>
+
+    <footer class="footer" style="background:#337ab7;">
+            <div class="container">
+                <img src='img/soccer_icon.png' alt="soccer ball">
+                <span class="text-muted" style="color:white">
+                    TeamWatch
+                </span>
+            </div>
+    </footer>
+    
+    <script src="main.js"></script>
+
+</body>
+</html>
