@@ -11,10 +11,6 @@ var config = {
 firebase.initializeApp(config);
 var db = firebase.firestore();
 
-var currentUser;
-var userRef;
-var gamesRef;
-var playersRef;
 /* Testing username: username
     * Testing password: password
     * From sign up page, we can create one account and use it for login. 
@@ -30,14 +26,35 @@ function login(){
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
-        console.log(errorCode + " u suck " + errorMessage);
+        alert("Incorrect username/password");
         // ...
     }).then(function(user){
-        currentUser = firebase.auth().currentUser;
-        userRef = db.collection('users').doc(currentUser.uid);
-        gamesRef = userRef.collection('games');   
-        playersRef = userRef.collection('players');
-        window.location = "home.html";
+        console.log(user.uid);
+        if(db.collection('users').doc(user.uid).get().then(function(doc){
+            // if user document already exists, do nothing
+            if (doc.exists){    
+                console.log('already exists');
+            }
+            // create new user document with empty player/game arrays
+            // using generated uid from firebase
+            else{              
+                db.collection('users').doc(user.uid).set({
+                    players: [],
+                    games: []
+                })
+                .then(function(){
+                    console.log("Document successfully written!");
+                    return true;
+                })
+                .catch(function(error){
+                    console.error("Error writing document: ", error);
+                    return false;
+                });
+            }
+        }))
+
+        console.log("////");
+        //window.location = "home.html";
         return true;
     });
 }
@@ -515,7 +532,6 @@ function savePlayer(){
 */
 
 function loadHome(){
-    console.log(currentUser);
     // Get today's date
     var today = new Date();
     var month = today.getMonth() + 1;
