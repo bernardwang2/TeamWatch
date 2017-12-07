@@ -535,11 +535,15 @@ function loadHome(){
     console.log(curr_id);
     var docRef = db.collection('users').doc(curr_id);
     var curr_games;
+    var curr_players;
+
+    console.log(docRef.get().doc.data().games);
 
     docRef.get().then(function(doc){
         if(doc && doc.exists){
             const myData = doc.data();
-            var games = myData.games;
+            curr_games = myData.games;
+            curr_players = myData.players;
             //console.log(myData.games);
             localStorage.setItem('curr_games', myData.games);
             localStorage.setItem('curr_players', myData.players);
