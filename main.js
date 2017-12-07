@@ -11,6 +11,7 @@ var config = {
 firebase.initializeApp(config);
 var db = firebase.firestore();
 
+var curr_user;
 /* Testing username: username
     * Testing password: password
     * From sign up page, we can create one account and use it for login. 
@@ -29,7 +30,8 @@ function login(){
         alert("Incorrect username/password");
         // ...
     }).then(function(user){
-        console.log(user.uid);
+        curr_user = user;
+        //console.log(user.uid);
         if(db.collection('users').doc(user.uid).get().then(function(doc){
             // if user document already exists, do nothing
             if (doc.exists){    
@@ -53,8 +55,8 @@ function login(){
             }
         }))
 
-        console.log("////");
-        //window.location = "home.html";
+        //console.log("////");
+        window.location = "home.html";
         return true;
     });
 }
