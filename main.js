@@ -22,7 +22,6 @@ var curr_user;
 function login(){
     var email = document.getElementById("username").value;
     var password = document.getElementById("password").value;
-    var _user;
 
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
         // Handle Errors here.
@@ -31,15 +30,14 @@ function login(){
         alert("Incorrect username/password");
         // ...
     }).then(function(user){
+        var docRef = db.collection('users').doc(user.uid);
         //console.log(user.uid);
-        if(db.collection('users').doc(user.uid).get().then(function(doc){
-            // if user document already exists, do nothing
-            if (doc.exists){    
+        // if user document already exists, do nothing
+        docRef.get().then(function(doc){
+            if(doc.exists){
                 console.log('already exists');
             }
-            // create new user document with empty player/game arrays
-            // using generated uid from firebase
-            else{              
+            else{
                 db.collection('users').doc(user.uid).set({
                     players: [],
                     games: []
@@ -52,10 +50,14 @@ function login(){
                     return false;
                 });
             }
-        }))
-        curr_user = db.collection('users').doc(user.uid);
-        window.location = 'home.html';
+            localStorage.setItem('uid', user.uid);
+            window.location = 'home.html';
+            //console.log(curr_user);
+        })
+        // create new user document with empty player/game arrays
+        // using generated uid from firebase
     });
+    console.log(firebase.auth().currentUser);
 }
 
 /*
@@ -529,13 +531,22 @@ function savePlayer(){
 */
 
 function loadHome(){
-    curr_user.get().then(function(doc){
+    var curr_id = localStorage.getItem('uid');
+    console.log(curr_id);
+    var docRef = db.collection('users').doc(curr_id);
+    var curr_games;
+
+    docRef.get().then(function(doc){
         if(doc && doc.exists){
             const myData = doc.data();
-            console.log("players" + myData.players);
+            var games = myData.games;
+            //console.log(myData.games);
+            localStorage.setItem('curr_games', myData.games);
+            localStorage.setItem('curr_players', myData.players);
         }
-    }).catch(function (error){
-        console.log("Error: " + error);
+    })
+    .catch(function(error){
+        console.log("error: " + error);
     });
 
     // Get today's date
@@ -552,6 +563,8 @@ function loadHome(){
     } 
 
     // Find matches playing today and display on home page
+    curr_games = localStorage.getItem('curr_games');
+
     today = month + '/' + date;
     console.log(curr_games);
     for(var i = 0; i < curr_games.length; i++){
