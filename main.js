@@ -22,6 +22,7 @@ var curr_user;
 function login(){
     var email = document.getElementById("username").value;
     var password = document.getElementById("password").value;
+    var _user;
 
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
         // Handle Errors here.
@@ -30,7 +31,6 @@ function login(){
         alert("Incorrect username/password");
         // ...
     }).then(function(user){
-        curr_user = user;
         //console.log(user.uid);
         if(db.collection('users').doc(user.uid).get().then(function(doc){
             // if user document already exists, do nothing
@@ -46,7 +46,6 @@ function login(){
                 })
                 .then(function(){
                     console.log("Document successfully written!");
-                    return true;
                 })
                 .catch(function(error){
                     console.error("Error writing document: ", error);
@@ -54,10 +53,8 @@ function login(){
                 });
             }
         }))
-
-        //console.log("////");
-        window.location = "home.html";
-        return true;
+        curr_user = db.collection('users').doc(user.uid);
+        window.location = 'home.html';
     });
 }
 
@@ -107,9 +104,7 @@ function signUp(){
             }
             console.log(error);
             // [END_EXCLUDE]
-        });
-
-        firebase.auth().onAuthStateChanged(function(user){
+        }).then(function(user){
             if(user){
                 window.location = "index.html";
                 return true;
@@ -534,6 +529,15 @@ function savePlayer(){
 */
 
 function loadHome(){
+    curr_user.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            console.log("players" + myData.players);
+        }
+    }).catch(function (error){
+        console.log("Error: " + error);
+    });
+
     // Get today's date
     var today = new Date();
     var month = today.getMonth() + 1;
@@ -549,8 +553,8 @@ function loadHome(){
 
     // Find matches playing today and display on home page
     today = month + '/' + date;
-    var games = JSON.parse(localStorage.getItem('stored_games'));
-    for(var i = 0; i < games.length; i++){
+    console.log(curr_games);
+    for(var i = 0; i < curr_games.length; i++){
         if(today == games[i].date){
             var day = JSON.parse(JSON.stringify(games[i].date));
             var time = JSON.parse(JSON.stringify(games[i].time));
