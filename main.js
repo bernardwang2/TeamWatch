@@ -1,53 +1,46 @@
+// Initialize Firebase
+var config = {
+    apiKey: "AIzaSyA-duDNTd4C2cNJ40JiqYglcWrSeR0n9uU",
+    authDomain: "cse134b-hw5-52381.firebaseapp.com",
+    databaseURL: "https://cse134b-hw5-52381.firebaseio.com",
+    projectId: "cse134b-hw5-52381",
+    storageBucket: "cse134b-hw5-52381.appspot.com",
+    messagingSenderId: "641375253114"
+};
+
+firebase.initializeApp(config);
+var db = firebase.firestore();
+
+var currentUser;
+var userRef;
+var gamesRef;
+var playersRef;
 /* Testing username: username
     * Testing password: password
     * From sign up page, we can create one account and use it for login. 
     * Everytime when you successfully create an account from sign up page, the 
     * previous account will be deleted for now.
 */
-var incorrect = false;
 
 function login(){
-    var username = document.getElementById("username").value;
+    var email = document.getElementById("username").value;
     var password = document.getElementById("password").value;
-    var username_create = localStorage.getItem("new_username");
-    var password_create = localStorage.getItem("new_password");
 
-    var para;
-    var node;
-    var element;
-
-    if(username == '' || password == ''){
-        incorrect = true;
-        para = document.createElement("p");
-        node = document.createTextNode("Username/Password are incorrect");
-        para.className = "error";
-        para.appendChild(node);
-        element = document.getElementById("loginform");
-        element.prepend(para);
-
-        return false;
-    }
-
-    if(username == username_create && password == password_create){
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode + " u suck " + errorMessage);
+        // ...
+    }).then(function(user){
+        currentUser = firebase.auth().currentUser;
+        userRef = db.collection('users').doc(currentUser.uid);
+        gamesRef = userRef.collection('games');   
+        playersRef = userRef.collection('players');
         window.location = "home.html";
         return true;
-    }
-    
-    else if(!incorrect){
-        incorrect = true;
-        para = document.createElement("p");
-        node = document.createTextNode("Username/Password are incorrect");
-        para.className = "error";
-        para.appendChild(node);
-        element = document.getElementById("loginform");
-        element.prepend(para);
-
-        return false;
-    }
-
-    return false;
+    });
 }
-
 
 /*
     * From sign up page, we can create one account and use it for login. 
@@ -64,10 +57,6 @@ function signUp(){
     //var identity = document.getElementById("iden").value;
     var identity_radios = document.getElementsByName("role");
     var identity_check = false;
-    
-    var para = document.createElement("p");
-    para.className = "error";
-    var node = null;
 
     /* checking radio button validity */
     for(var i = 0; i < identity_radios.length; i++){
@@ -77,37 +66,44 @@ function signUp(){
     }
 
     if(tmp_username == '' || tmp_first == '' || tmp_last == '' || pw == '' || cpw == ''){
-        node = document.createTextNode("All fields must be filled");
+        alert("All fields must be filled");
     }else if(identity_check == false){
-        node = document.createTextNode("Please choose your role");
+        alert("Please choose your role");
     }else if(pw != cpw){
-        node = document.createTextNode("Passwords do not match");
+        alert("Passwords do not match");
     }
 
     if(pw == cpw && pw != '' && cpw != ''){
-        localStorage.setItem("new_username", document.getElementById("sign_username").value);
-        localStorage.setItem("new_password", document.getElementById("sign_password").value);
-        window.location = "index.html";
-        return true;
-    }
-    
-    para.appendChild(node);
-    var element = document.getElementById("sign_form");
-    if(incorrect == true){
-        element.removeChild(element.getElementsByTagName('p')[0]);        
-    }
-    element.prepend(para);
-    incorrect = true;
-}
+        // storing username and password in firebase
+        
+        firebase.auth().createUserWithEmailAndPassword(tmp_username, pw).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // [START_EXCLUDE]
+            if (errorCode == 'auth/weak-password') {
+              alert('The password is too weak.');
+            } else {
+              alert(errorMessage);
+            }
+            console.log(error);
+            // [END_EXCLUDE]
+        });
 
+        firebase.auth().onAuthStateChanged(function(user){
+            if(user){
+                window.location = "index.html";
+                return true;
+            }
+        });
+    }
+}
+    
 
 /* 
     * Function to add game to page
 */
-incorrect = false;
-
 function addGame(){
-
     var c_status = document.getElementsByName('optradio');
     var n_status;
 
@@ -117,45 +113,13 @@ function addGame(){
         }
     }
 
-    // Getting array of existing games
-    // Dummy games
-    var games = JSON.parse(localStorage.getItem('stored_games')) || 
-    [
-        {
-            opponent: 'Their Team',
-            date: '10/21',
-            time: '10:00 PM',
-            location: 'Tree House',
-            status: 'Away'
-        },
-        {
-            opponent: 'Their Team',
-            date: '10/23',
-            time: '7:00 PM',
-            location: 'Tree House',
-            status: 'Home'
-        },
-        {
-            opponent: 'Their Team',
-            date: '11/26',
-            time: '1:00 PM',
-            location: 'Tree House',
-            status: 'Away'
-        }
-    ];
-
-    //console.log("before: " + games);
-    var node = null;
-    var para = document.createElement("p");
-    para.className = "error";
-
     var n_opponent = document.getElementById('opponent').value;
     var n_date = document.getElementById('date').value;
     var n_time = document.getElementById('time').value;
     var n_location = document.getElementById('location').value;
     
     if(n_opponent == '' || n_date == '' || n_time == '' || n_location == '' || n_status === null){
-        node = document.createTextNode("All fields must be filled");
+        alert("All fields must be filled");
     }else{
         //alert("here");
         // Creating new game object after validation
@@ -167,18 +131,12 @@ function addGame(){
             status: n_status
         };
 
-        // Adding new game to array
-        games.push(new_game);
-        localStorage.setItem('stored_games', JSON.stringify(games));
-        window.location = "schedule.html";
-    }
+        usersRef.set(new_game).then(function(){
+            console.log("Game successfully added!");
+        });
 
-    para.appendChild(node);
-    //console.log(incorrect);
-    if(incorrect == false){
-        var element = document.getElementById("addgame_form");
-        element.prepend(para);
-        incorrect = true;
+        // Adding new game to array
+        //window.location = "schedule.html";
     }
 }
 
@@ -189,34 +147,6 @@ function addGame(){
 */
 function showSchedule(){
     var games = [];
-    if(localStorage.getItem('stored_games') === null){
-        games = [
-            {
-                opponent: 'Their Team',
-                date: '10/21',
-                time: '10:00 PM',
-                location: 'Tree House',
-                status: 'Away'
-            },
-            {
-                opponent: 'Their Team',
-                date: '10/23',
-                time: '7:00 PM',
-                location: 'Tree House',
-                status: 'Home'
-            },
-            {
-                opponent: 'Their Team',
-                date: '11/27',
-                time: '1:00 PM',
-                location: 'Tree House',
-                status: 'Away'
-            }
-        ];
-        localStorage.setItem('stored_games', JSON.stringify(games));
-    }else{
-        games = JSON.parse(localStorage.getItem('stored_games'))
-    }
 
 
     // console.log(games);
@@ -279,7 +209,6 @@ function loadEditGame(){
 /*
     * Function to save game after editing
 */
-incorrect = false;
 function saveGame(){
     var ind = localStorage.getItem('index');
     var games = JSON.parse(localStorage.getItem('stored_games'));
@@ -309,14 +238,6 @@ function saveGame(){
     
         localStorage.setItem('stored_games', JSON.stringify(games));
         window.location = "schedule.html";
-    }
-
-    para.appendChild(node);
-    //console.log(incorrect);
-    if(incorrect == false){
-        var element = document.getElementById("editgame_form");
-        element.prepend(para);
-        incorrect = true;
     }
 }
 
@@ -348,11 +269,7 @@ function deleteGame(){
 /* 
     * Function to add player to page
 */
-incorrect = false;
 function addPlayer(){
-    var node = null;
-    var para = document.createElement("p");
-    para.className = "error";
 
     var f_name = document.getElementById("firstName").value;
     var l_name = document.getElementById("lastName").value;
@@ -380,71 +297,6 @@ function addPlayer(){
     else{
         con_captain = "no";
     }
-    
-    var players = JSON.parse(localStorage.getItem('stored_players')) || 
-    [
-        {
-            firstname: "John",
-            lastname: "Wick",
-            position: "Forward",
-            fullname: "John Wick",
-            jersey: "1",
-            dateOfBirth: "09/11/1995",
-            captain: "yes",
-            profile_picture: "img/cat.jpg",
-            goals: "0",
-            fouls: "0",
-            yellowcards: "0",
-            redcards: "0",
-            shots: "0",
-            cornerkicks: "0",
-            goalkicks: "0",
-            penaltykicks: "0",
-            throwins: "0",
-            gamesplayed: "0"
-        },
-        {
-            firstname: "Marry",
-            lastname: "Wick",
-            position: "Goal Keeper",
-            fullname: "Mary Wick",
-            jersey: "2",
-            dateOfBirth: "09/11/1995",
-            captain: "no",
-            profile_picture: "img/cat.jpg",
-            goals: "0",
-            fouls: "0",
-            yellowcards: "0",
-            redcards: "0",
-            shots: "0",
-            cornerkicks: "0",
-            goalkicks: "0",
-            penaltykicks: "0",
-            throwins: "0",
-            gamesplayed: "0"
-        },
-        {
-            firstname: "John Jr",
-            lastname: "Wick",
-            position: "Center Back",
-            fullname: "John Jr Wick",
-            jersey: "3",
-            dateOfBirth: "09/11/1995",
-            captain: "no",
-            profile_picture: "img/cat.jpg",
-            goals: "0",
-            fouls: "0",
-            yellowcards: "0",
-            redcards: "0",
-            shots: "0",
-            cornerkicks: "0",
-            goalkicks: "0",
-            penaltykicks: "0",
-            throwins: "0",
-            gamesplayed: "0"
-        }
-    ];
-    
     
     var new_player = {
         fullname: full_name,
@@ -663,6 +515,7 @@ function savePlayer(){
 */
 
 function loadHome(){
+    console.log(currentUser);
     // Get today's date
     var today = new Date();
     var month = today.getMonth() + 1;

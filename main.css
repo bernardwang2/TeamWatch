@@ -4,7 +4,6 @@
     box-sizing: border-box;
 }
 
-
 html {
     position: relative;
     min-height: 100%;
@@ -534,7 +533,6 @@ table {
 .table>tbody>tr>td{
     vertical-align: top;
 }
-
 
 button{
     font-family: inherit;
