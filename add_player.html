@@ -11,21 +11,20 @@
     <link rel="manifest" href="/manifest.json">    
 </head>
 
-<body>
-    <header>
-        <nav class="navbar">
-
-            <div class="col-xs-12 team-name">
-                <a href="index.html">
-                    <img src="https://cdn.onlinewebfonts.com/svg/img_248752.png" alt="log out" class="settings" onclick="signout()">
-                </a>
-                My Teams &#9660;
-            </div>
-
-            <a class="col-xs-4 btn btn-primary" href="home.html">Home</a>
-            <a class="col-xs-4 btn btn-primary" href="schedule.html">Schedule</a>
-            <a class="col-xs-4 btn btn-primary active" href="players.html">Players</a>
-        </nav>			
+<body onload="loadNav()">
+        <header>
+            <nav class="navbar">
+    
+                <div class="col-xs-12 team-name" id="team_name">
+                    <a href="index.html">
+                        <img src="https://cdn.onlinewebfonts.com/svg/img_248752.png" alt="log out" class="settings" onclick="signout()">
+                    </a>
+                </div>
+    
+                <a class="col-xs-4 btn btn-primary" href="home.html">Home</a>
+                <a class="col-xs-4 btn btn-primary" href="schedule.html">Schedule</a>
+                <a class="col-xs-4 btn btn-primary active" href="players.html">Players</a>
+            </nav>		
     </header>
 
     <h3 style="text-align:center;">Add Player</h3>

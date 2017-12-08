@@ -11,15 +11,14 @@
     <link rel="manifest" href="/manifest.json">    
 </head>
 
-<body onload="loadHome()">
+<body onload="loadHome(); loadNav()">
     <header>
         <nav class="navbar">
 
-            <div class="col-xs-12 team-name">
+            <div class="col-xs-12 team-name" id="team_name">
                 <a href="index.html">
                     <img src="https://cdn.onlinewebfonts.com/svg/img_248752.png" alt="log out" class="settings" onclick="signout()">
                 </a>
-                My Teams &#9660;
             </div>
 
             <a class="col-xs-4 btn btn-primary active" href="home.html">Home</a>

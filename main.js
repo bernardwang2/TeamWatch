@@ -27,6 +27,11 @@ var curr_user;
     * previous account will be deleted for now.
 */
 
+function loadNav(){
+    var el = document.getElementById('team_name');
+    el.innerHTML += localStorage.getItem('stored_teamname');
+}
+
 function login(){
     var email = document.getElementById("username").value;
     var password = document.getElementById("password").value;
@@ -147,16 +152,19 @@ function signTeam(){
         alert("All fields must be filled");
     }else{
         docRef.get().then(function(doc){
-            if(doc && doc.exists){
-                docRef.set({
-                    teamName: _teamName
-                }).then(function(){
-                    console.log("successfully added teamname");
-                    window.location = 'index.html';
-                }).catch(function(err){
-                    console.log("error " + err);
-                })
-            }
+            db.collection('users').doc(localStorage.getItem('uid')).set({
+                teamName: _teamName,
+                players: [],
+                games: []
+            })
+            .then(function(){
+                console.log("successfully added teamname");
+                window.location = 'index.html';
+            })
+            .catch(function(error){
+                console.error("Error writing document: ", error);
+                return false;
+            });
         });
     }
 }
@@ -712,6 +720,7 @@ function loadHome(){
             // User games and players in localstorage
             localStorage.setItem('stored_games', JSON.stringify(myData.games));
             localStorage.setItem('stored_players', JSON.stringify(myData.players));
+            localStorage.setItem('stored_teamname', JSON.stringify(myData.teamName));
 
             // Get today's date
             var today = new Date();
