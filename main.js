@@ -721,44 +721,44 @@ function loadHome(){
             // User games and players in localstorage
             localStorage.setItem('stored_games', JSON.stringify(myData.games));
             localStorage.setItem('stored_players', JSON.stringify(myData.players));
+
+            // Get today's date
+            var today = new Date();
+            var month = today.getMonth() + 1;
+            var date = today.getDate();
+            
+            // Add leading zero if necessary
+            if(month < 10) {
+                month = '0' + month;
+            } 
+            if(date < 10) {
+                date = '0' + date;
+            } 
+
+            // Find matches playing today and display on home page
+            var stored_games = myData.games;
+
+            today = month + '/' + date;
+            console.log(stored_games);
+            for(var i = 0; i < stored_games.length; i++){
+                if(today == stored_games[i].date){
+                    var day = JSON.parse(JSON.stringify(stored_games[i].date));
+                    var time = JSON.parse(JSON.stringify(stored_games[i].time));
+                    var loc = JSON.parse(JSON.stringify(stored_games[i].location));
+                    var opp = JSON.parse(JSON.stringify(stored_games[i].opponent));
+                    var status = JSON.parse(JSON.stringify(stored_games[i].status));
+                    document.getElementById("today_game").innerHTML = day + "<br>" +
+                        time + "<br>" + 
+                        loc + "<br><br>" +
+                        "My Team vs. " + opp + "<br>" +
+                        status + " Game <br>";
+                }
+            }
         }
     })
     .catch(function(error){
         console.log("error: " + error);
     });
-
-    // Get today's date
-    var today = new Date();
-    var month = today.getMonth() + 1;
-    var date = today.getDate();
-    
-    // Add leading zero if necessary
-    if(month < 10) {
-        month = '0' + month;
-    } 
-    if(date < 10) {
-        date = '0' + date;
-    } 
-
-    // Find matches playing today and display on home page
-    var stored_games = JSON.parse(localStorage.getItem('stored_games'));
-
-    today = month + '/' + date;
-    console.log(stored_games);
-    for(var i = 0; i < stored_games.length; i++){
-        if(today == stored_games[i].date){
-            var day = JSON.parse(JSON.stringify(stored_games[i].date));
-            var time = JSON.parse(JSON.stringify(stored_games[i].time));
-            var loc = JSON.parse(JSON.stringify(stored_games[i].location));
-            var opp = JSON.parse(JSON.stringify(stored_games[i].opponent));
-            var status = JSON.parse(JSON.stringify(stored_games[i].status));
-            document.getElementById("today_game").innerHTML = day + "<br>" +
-                time + "<br>" + 
-                loc + "<br><br>" +
-                "My Team vs. " + opp + "<br>" +
-                status + " Game <br>";
-        }
-    }
 
 }
 

@@ -1,0 +1,56 @@
+[debug] [2017-12-08T08:16:03.711Z] ----------------------------------------------------------------------
+[debug] [2017-12-08T08:16:03.711Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\kjan9\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase deploy
+[debug] [2017-12-08T08:16:03.711Z] CLI Version:   3.16.0
+[debug] [2017-12-08T08:16:03.711Z] Platform:      win32
+[debug] [2017-12-08T08:16:03.711Z] Node Version:  v6.9.1
+[debug] [2017-12-08T08:16:03.711Z] Time:          Fri Dec 08 2017 00:16:03 GMT-0800 (Pacific Standard Time)
+[debug] [2017-12-08T08:16:03.711Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2017-12-08T08:16:03.742Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2017-12-08T08:16:03.742Z] > authorizing via signed-in user
+[debug] [2017-12-08T08:16:03.742Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/cse134b-hw5-52381  
+  
+ Fri Dec 08 2017 00:16:03 GMT-0800 (Pacific Standard Time)
+[debug] [2017-12-08T08:16:04.398Z] <<< HTTP RESPONSE 200
+[debug] [2017-12-08T08:16:04.398Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/cse134b-hw5-52381/tokens  
+  
+ Fri Dec 08 2017 00:16:04 GMT-0800 (Pacific Standard Time)
+[debug] [2017-12-08T08:16:04.958Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'cse134b-hw5-52381'...
+[info] 
+[info] i  deploying database, firestore, hosting
+[info] i  database: checking rules syntax...
+[debug] [2017-12-08T08:16:05.458Z] >>> HTTP REQUEST PUT https://cse134b-hw5-52381.firebaseio.com/.settings/rules.json?dryRun=true  
+ {
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null"
+  }
+}
+ 
+ Fri Dec 08 2017 00:16:05 GMT-0800 (Pacific Standard Time)
+[debug] [2017-12-08T08:16:06.005Z] <<< HTTP RESPONSE 200
+[info] +  database: rules syntax for database cse134b-hw5-52381 is valid
+[info] i  firestore: checking firestore.rules for compilation errors...
+[debug] [2017-12-08T08:16:06.021Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/cse134b-hw5-52381:test  
+ { source: { files: [ [Object] ] } } 
+ Fri Dec 08 2017 00:16:06 GMT-0800 (Pacific Standard Time)
+[debug] [2017-12-08T08:16:06.442Z] <<< HTTP RESPONSE 200
+[info] +  firestore: rules file firestore.rules compiled successfully
+[info] i  firestore: uploading rules firestore.rules...
+[debug] [2017-12-08T08:16:06.442Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/cse134b-hw5-52381/rulesets  
+ { source: { files: [ [Object] ] } } 
+ Fri Dec 08 2017 00:16:06 GMT-0800 (Pacific Standard Time)
+[debug] [2017-12-08T08:16:06.458Z] >>> HTTP REQUEST GET https://firestore.googleapis.com/v1beta1/projects/cse134b-hw5-52381/databases/(default)/indexes  
+  
+ Fri Dec 08 2017 00:16:06 GMT-0800 (Pacific Standard Time)
+[debug] [2017-12-08T08:16:06.880Z] <<< HTTP RESPONSE 200
+[debug] [2017-12-08T08:16:06.880Z] [rules] created ruleset projects/cse134b-hw5-52381/rulesets/be2c3096-dff1-441d-af3a-f0d9fca126f6
+[debug] [2017-12-08T08:16:06.989Z] <<< HTTP RESPONSE 200
+[info] i  hosting: preparing public directory for upload...
+[debug] [2017-12-08T08:16:07.307Z] >>> HTTP REQUEST PUT https://deploy.firebase.com/v1/hosting/cse134b-hw5-52381/uploads/-L-pBX0ko075zSw8KABF?fileCount=153&message=  
+  
+ Fri Dec 08 2017 00:16:07 GMT-0800 (Pacific Standard Time)
+[debug] [2017-12-08T08:16:10.176Z] <<< HTTP RESPONSE 200
+[debug] [2017-12-08T08:16:10.176Z] [hosting] .tgz uploaded successfully, waiting for extraction

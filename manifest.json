@@ -1,0 +1,31 @@
+{
+  "short_name": "TeamWatch",
+  "name": "Soccer App for Little League Coaches",
+  "icons": [
+    {
+      "src": "launcher-icon-1x.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "launcher-icon-2x.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "launcher-icon-4x.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+        "src": "launcher-icon-16x.png",
+        "type": "image/png",
+        "sizes": "768x768"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#337ab7"
+}
