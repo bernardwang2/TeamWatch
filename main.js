@@ -260,7 +260,7 @@ function showSchedule(){
             console.log(games);
 
             for(var i = 0; i < games.length; i++){
-                var str = "<li><img src='img/trash.png' alt='delete' class='delete' onclick='deleteGame()'><a href='game.html' onclick='editGame()'>" + games[i].date + " - My Team vs. " + games[i].opponent + "</a><img src='img/edit.png' alt='edit' class='edit' onclick='editGame()'></li>"
+                var str = "<li><img src='img/trash.png' alt='delete' class='delete' onclick='deleteGame()'><a href='game.html' onclick='detailGame()'>" + games[i].date + " - My Team vs. " + games[i].opponent + "</a><img src='img/edit.png' alt='edit' class='edit' onclick='editGame()'></li>"
                 document.getElementById("game_list").innerHTML += str;
             }
         }
@@ -274,7 +274,7 @@ function showSchedule(){
 /* 
     * Function to enter game when clicked on from schedule
 */
-function editGame(){
+function detailGame(){
     var ind;    // storing index of clicked list item
     var parent = document.getElementsByTagName('ul')[0];
     // Trying to get the index of the list item chosen for deletion
