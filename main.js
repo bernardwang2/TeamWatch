@@ -29,7 +29,10 @@ var curr_user;
 
 function loadNav(){
     var el = document.getElementById('team_name');
-    el.innerHTML += localStorage.getItem('stored_teamname');
+
+    // get rid of quotes regex
+    var team_name = localStorage.getItem('stored_teamname').replace(/['"]+/g, '');
+    el.innerHTML += team_name;
 }
 
 function login(){
@@ -48,27 +51,12 @@ function login(){
         // if user document already exists, do nothing
         docRef.get().then(function(doc){
             if(doc.exists){
-                console.log('already exists');
+                var myData = doc.data();
+                localStorage.setItem('stored_teamname', str);
                 localStorage.setItem('uid', user.uid);
                 console.log("Document successfully written!");
                 window.location = 'home.html';
             }
-            else{
-                db.collection('users').doc(user.uid).set({
-                    players: [],
-                    games: []
-                })
-                .then(function(){
-                    localStorage.setItem('uid', user.uid);
-                    console.log("Document successfully written!");
-                    window.location = 'home.html';
-                })
-                .catch(function(error){
-                    console.error("Error writing document: ", error);
-                    return false;
-                });
-            }
-
             //console.log(curr_user);
         })
         // create new user document with empty player/game arrays
@@ -158,6 +146,7 @@ function signTeam(){
                 games: []
             })
             .then(function(){
+                localStorage.setItem('stored_teamname', _teamName);
                 console.log("successfully added teamname");
                 window.location = 'index.html';
             })
@@ -537,9 +526,13 @@ function showPlayer(){
             var players = myData.players;
             console.log(players);
 
-            for(var i = 0; i < players.length; i++){
-                var str = "<tr><td class='headcol'><img class='player_img' src='" + players[i].profile_picture + "' alt='Player'></td><td>" + players[i].firstname + "</td><td>" + players[i].lastname + "</td><td>" + players[i].position + "</td><td><input type='button' value='Detail' class='btn btn-primary' onclick='detail_button_player(this)'></td><td><img src='img/trash.png' alt='delete' class='delete_edit_player' onclick='deletePlayer(this)'></td><td><img src='img/edit.png' alt='edit' class='delete_edit_player' onclick='edit_button_player(this)'></tr>"
-                document.getElementById("players_list").innerHTML += str;
+            if(players.length != 0){
+                for(var i = 0; i < players.length; i++){
+                    var str = "<tr><td class='headcol'><img class='player_img' src='" + players[i].profile_picture + "' alt='Player'></td><td>" + players[i].firstname + "</td><td>" + players[i].lastname + "</td><td>" + players[i].position + "</td><td><input type='button' value='Detail' class='btn btn-primary' onclick='detail_button_player(this)'></td><td><img src='img/trash.png' alt='delete' class='delete_edit_player' onclick='deletePlayer(this)'></td><td><img src='img/edit.png' alt='edit' class='delete_edit_player' onclick='edit_button_player(this)'></tr>"
+                    document.getElementById("players_list").innerHTML += str;
+                }
+            }else{
+                document.getElementById("players_list").innerHTML += "<br><h4>No players yet! Add a player with the + button</h4>";
             }
         }
     })
