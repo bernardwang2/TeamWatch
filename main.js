@@ -36,22 +36,87 @@ function login(){
         docRef.get().then(function(doc){
             if(doc.exists){
                 console.log('already exists');
+                localStorage.setItem('uid', user.uid);
+                console.log("Document successfully written!");
+                window.location = 'home.html';
             }
             else{
                 db.collection('users').doc(user.uid).set({
-                    players: [],
+                    players: [
+                        {
+                            firstname: "John",
+                            lastname: "Wick",
+                            position: "Forward",
+                            fullname: "John Wick",
+                            jersey: "1",
+                            dateOfBirth: "09/11/1995",
+                            captain: "yes",
+                            profile_picture: "img/cat.jpg",
+                            goals: 0,
+                            fouls: 0,
+                            yellowcards: 0,
+                            redcards: 0,
+                            shots: 0,
+                            cornerkicks: 0,
+                            goalkicks: 0,
+                            penaltykicks: 0,
+                            throwins: 0,
+                            gamesplayed: 0
+                        },
+                        {
+                            firstname: "Marry",
+                            lastname: "Wick",
+                            position: "Goal Keeper",
+                            fullname: "Mary Wick",
+                            jersey: "2",
+                            dateOfBirth: "09/11/1995",
+                            captain: "no",
+                            profile_picture: "img/cat.jpg",
+                            goals: 0,
+                            fouls: 0,
+                            yellowcards: 0,
+                            redcards: 0,
+                            shots: 0,
+                            cornerkicks: 0,
+                            goalkicks: 0,
+                            penaltykicks: 0,
+                            throwins: 0,
+                            gamesplayed: 0
+                        },
+                        {
+                            firstname: "John Jr",
+                            lastname: "Wick",
+                            position: "Center Back",
+                            fullname: "John Jr Wick",
+                            jersey: "3",
+                            dateOfBirth: "09/11/1995",
+                            captain: "no",
+                            profile_picture: "img/cat.jpg",
+                            goals: 0,
+                            fouls: 0,
+                            yellowcards: 0,
+                            redcards: 0,
+                            shots: 0,
+                            cornerkicks: 0,
+                            goalkicks: 0,
+                            penaltykicks: 0,
+                            throwins: 0,
+                            gamesplayed: 0
+                        }
+                    ],
                     games: []
                 })
                 .then(function(){
+                    localStorage.setItem('uid', user.uid);
                     console.log("Document successfully written!");
+                    window.location = 'home.html';
                 })
                 .catch(function(error){
                     console.error("Error writing document: ", error);
                     return false;
                 });
             }
-            localStorage.setItem('uid', user.uid);
-            window.location = 'home.html';
+
             //console.log(curr_user);
         })
         // create new user document with empty player/game arrays
@@ -120,6 +185,8 @@ function signUp(){
     * Function to add game to page
 */
 function addGame(){
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
+
     var c_status = document.getElementsByName('optradio');
     var n_status;
 
@@ -128,49 +195,80 @@ function addGame(){
             n_status = c_status[i].value;
         }
     }
-
+    
     var n_opponent = document.getElementById('opponent').value;
     var n_date = document.getElementById('date').value;
     var n_time = document.getElementById('time').value;
     var n_location = document.getElementById('location').value;
-    
+
+    // if form validates, then push new game into games array
     if(n_opponent == '' || n_date == '' || n_time == '' || n_location == '' || n_status === null){
         alert("All fields must be filled");
     }else{
+        docRef.get().then(function(doc){
+            if(doc && doc.exists){
+                const myData = doc.data();
+                var _games = myData.games;
+                console.log(_games);
+
+                // obejct for new game
+                var new_game = {
+                    date: n_date,
+                    location: n_location,
+                    opponent: n_opponent,
+                    status: n_status,
+                    time: n_time
+                };
+
+                // pushing new game to temp array
+                _games.push(new_game);
+                console.log(_games);
+                localStorage.setItem('stored_games', JSON.stringify(_games));
+
+                // updating firestore database
+                docRef.set({
+                    games: _games,
+                    players: myData.players
+                }).then(function(){
+                    console.log("game successfully added!");
+                    window.location = 'schedule.html';
+                });
+            }
+        })
+        .catch(function(error){
+            console.log("error: " + error);
+        });
         //alert("here");
         // Creating new game object after validation
-        var new_game = {
-            opponent: n_opponent,
-            date: n_date,
-            time: n_time,
-            location: n_location,
-            status: n_status
-        };
-
-        usersRef.set(new_game).then(function(){
-            console.log("Game successfully added!");
-        });
 
         // Adding new game to array
         //window.location = "schedule.html";
     }
 }
 
-
-
 /* 
     * Function to show the games in the schedule page (create)
 */
 function showSchedule(){
-    var games = [];
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
 
+    // getting games from database
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            var games = myData.games;
+            console.log(games);
 
-    // console.log(games);
+            for(var i = 0; i < games.length; i++){
+                var str = "<li><img src='img/trash.png' alt='delete' class='delete' onclick='deleteGame()'><a href='game.html'>" + games[i].date + " - My Team vs. " + games[i].opponent + "</a><img src='img/edit.png' alt='edit' class='edit' onclick='editGame()'></li>"
+                document.getElementById("game_list").innerHTML += str;
+            }
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    });
 
-    for(var i = 0; i < games.length; i++){
-        var str = "<li><img src='img/trash.png' alt='delete' class='delete' onclick='deleteGame()'><a href='game.html'>" + games[i].date + " - My Team vs. " + games[i].opponent + "</a><img src='img/edit.png' alt='edit' class='edit' onclick='editGame()'></li>"
-        document.getElementById("game_list").innerHTML += str;
-    }
 }
 
 
@@ -179,7 +277,6 @@ function showSchedule(){
 */
 function editGame(){
     var ind;    // storing index of clicked list item
-    
     var parent = document.getElementsByTagName('ul')[0];
     // Trying to get the index of the list item chosen for deletion
     parent.onclick = function (e) {
@@ -227,11 +324,8 @@ function loadEditGame(){
 */
 function saveGame(){
     var ind = localStorage.getItem('index');
-    var games = JSON.parse(localStorage.getItem('stored_games'));
-
-    var node = null;
-    var para = document.createElement("p");
-    para.className = "error";
+    var stored_games = JSON.parse(localStorage.getItem('stored_games'));
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
 
     var n_opponent = document.getElementById('opponent').value;
     var n_date = document.getElementById('date').value;
@@ -239,21 +333,39 @@ function saveGame(){
     var n_location = document.getElementById('location').value;
 
     if(n_opponent == '' || n_date == '' || n_time == '' || n_location == ''){
-        node = document.createTextNode("All fields must be filled");
+        alert("All fields must be filled");
     }else{
-        games[ind].opponent = n_opponent;
-        games[ind].date = n_date;
-        games[ind].time = n_time;
-        games[ind].location = n_location;
+        stored_games[ind].opponent = n_opponent;
+        stored_games[ind].date = n_date;
+        stored_games[ind].time = n_time;
+        stored_games[ind].location = n_location;
         
         if(document.getElementById("Home").checked == true){
-            games[ind].status = 'Home';
+            stored_games[ind].status = 'Home';
         }else{
-            games[ind].status = 'Away';
+            stored_games[ind].status = 'Away';
         }
     
-        localStorage.setItem('stored_games', JSON.stringify(games));
-        window.location = "schedule.html";
+        localStorage.setItem('stored_games', JSON.stringify(stored_games));
+
+        // Updating firestore database
+        docRef.get().then(function(doc){
+            if(doc && doc.exists){
+                const myData = doc.data();
+                console.log(stored_games);
+                // updating firestore database
+                docRef.set({
+                    games: stored_games,
+                    players: myData.players
+                }).then(function(){
+                    console.log("game successfully edited!");
+                    window.location = 'schedule.html';
+                });
+            }
+        })
+        .catch(function(error){
+            console.log("error: " + error);
+        });
     }
 }
 
@@ -261,8 +373,9 @@ function saveGame(){
     * Function to delete game when icon is clicked on schedule
 */
 function deleteGame(){
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
     var ind;    // storing index of clicked list item
-
+    var stored_games;
     var parent = document.getElementsByTagName('ul')[0];
     // Trying to get the index of the list item chosen for deletion
     parent.onclick = function (e) {
@@ -275,11 +388,28 @@ function deleteGame(){
         //alert("IND = " + ind);
 
         // Getting array from local storage, and deleting the displayed list item
-        var games = JSON.parse(localStorage.getItem('stored_games'));
-        games.splice(ind, 1);   // removing the element in array @ index
+        stored_games = JSON.parse(localStorage.getItem('stored_games'));
+        stored_games.splice(ind, 1);   // removing the element in array @ index
         parent.removeChild(parent.children[ind]);   // removing from DOM
-        localStorage.setItem('stored_games', JSON.stringify(games)); // storing back into localstorage
+        localStorage.setItem('stored_games', JSON.stringify(stored_games)); // storing back into localstorage
     }
+
+    // Updating firestore database
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            // updating firestore database
+            docRef.set({
+                games: stored_games,
+                players: myData.players
+            }).then(function(){
+                console.log("game successfully deleted!");
+            });
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    });
 }
 
 /* 
@@ -346,73 +476,9 @@ function addPlayer(){
 */
 function showPlayer(){
     var players;
-    if(!localStorage.getItem('stored_players')){
-        players = [
-            {
-                firstname: "John",
-                lastname: "Wick",
-                position: "Forward",
-                fullname: "John Wick",
-                jersey: "1",
-                dateOfBirth: "09/11/1995",
-                captain: "yes",
-                profile_picture: "img/cat.jpg",
-                goals: 0,
-                fouls: 0,
-                yellowcards: 0,
-                redcards: 0,
-                shots: 0,
-                cornerkicks: 0,
-                goalkicks: 0,
-                penaltykicks: 0,
-                throwins: 0,
-                gamesplayed: 0
-            },
-            {
-                firstname: "Marry",
-                lastname: "Wick",
-                position: "Goal Keeper",
-                fullname: "Mary Wick",
-                jersey: "2",
-                dateOfBirth: "09/11/1995",
-                captain: "no",
-                profile_picture: "img/cat.jpg",
-                goals: 0,
-                fouls: 0,
-                yellowcards: 0,
-                redcards: 0,
-                shots: 0,
-                cornerkicks: 0,
-                goalkicks: 0,
-                penaltykicks: 0,
-                throwins: 0,
-                gamesplayed: 0
-            },
-            {
-                firstname: "John Jr",
-                lastname: "Wick",
-                position: "Center Back",
-                fullname: "John Jr Wick",
-                jersey: "3",
-                dateOfBirth: "09/11/1995",
-                captain: "no",
-                profile_picture: "img/cat.jpg",
-                goals: 0,
-                fouls: 0,
-                yellowcards: 0,
-                redcards: 0,
-                shots: 0,
-                cornerkicks: 0,
-                goalkicks: 0,
-                penaltykicks: 0,
-                throwins: 0,
-                gamesplayed: 0
-            }
-        ];
-        localStorage.setItem('stored_players', JSON.stringify(players));
-    }
 
     players = JSON.parse(localStorage.getItem('stored_players'));
+    console.log(players);
     //console.log(players);
     for(var i = 0; i < players.length; i++){
         var str = "<tr><td class='headcol'><img class='player_img' src='" + players[i].profile_picture + "' alt='Temporary Player's Picture'></td><td>" + players[i].firstname + "</td><td>" + players[i].lastname + "</td><td>" + players[i].position + "</td><td><input type='button' value='Detail' class='btn btn-primary' onclick='detail_button_player(this)'></td><td><input type='button' value='Delete' class='btn btn-primary' onclick='deletePlayer(this)'></td><td><input type='button' value='Edit' class='btn btn-primary' onclick='edit_button_player(this)'></tr>"
@@ -534,19 +600,15 @@ function loadHome(){
     var curr_id = localStorage.getItem('uid');
     console.log(curr_id);
     var docRef = db.collection('users').doc(curr_id);
-    var curr_games;
-    var curr_players;
 
-    console.log(docRef.get().doc.data().games);
-
+    // Grabbing games and players arrays from database
     docRef.get().then(function(doc){
         if(doc && doc.exists){
             const myData = doc.data();
-            curr_games = myData.games;
-            curr_players = myData.players;
-            //console.log(myData.games);
-            localStorage.setItem('curr_games', myData.games);
-            localStorage.setItem('curr_players', myData.players);
+
+            // User games and players in localstorage
+            localStorage.setItem('stored_games', JSON.stringify(myData.games));
+            localStorage.setItem('stored_players', JSON.stringify(myData.players));
         }
     })
     .catch(function(error){
@@ -567,17 +629,17 @@ function loadHome(){
     } 
 
     // Find matches playing today and display on home page
-    curr_games = localStorage.getItem('curr_games');
+    var stored_games = localStorage.getItem('stored_games');
 
     today = month + '/' + date;
-    console.log(curr_games);
-    for(var i = 0; i < curr_games.length; i++){
-        if(today == games[i].date){
-            var day = JSON.parse(JSON.stringify(games[i].date));
-            var time = JSON.parse(JSON.stringify(games[i].time));
-            var loc = JSON.parse(JSON.stringify(games[i].location));
-            var opp = JSON.parse(JSON.stringify(games[i].opponent));
-            var status = JSON.parse(JSON.stringify(games[i].status));
+    console.log(stored_games);
+    for(var i = 0; i < stored_games.length; i++){
+        if(today == stored_games[i].date){
+            var day = JSON.parse(JSON.stringify(stored_games[i].date));
+            var time = JSON.parse(JSON.stringify(stored_games[i].time));
+            var loc = JSON.parse(JSON.stringify(stored_games[i].location));
+            var opp = JSON.parse(JSON.stringify(stored_games[i].opponent));
+            var status = JSON.parse(JSON.stringify(stored_games[i].status));
             document.getElementById("today_game").innerHTML = day + "<br>" +
                 time + "<br>" + 
                 loc + "<br><br>" +
