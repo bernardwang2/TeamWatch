@@ -538,7 +538,7 @@ function showPlayer(){
             console.log(players);
 
             for(var i = 0; i < players.length; i++){
-                var str = "<tr><td class='headcol'><img class='player_img' src='" + players[i].profile_picture + "' alt='Temporary Player's Picture'></td><td>" + players[i].firstname + "</td><td>" + players[i].lastname + "</td><td>" + players[i].position + "</td><td><input type='button' value='Detail' class='btn btn-primary' onclick='detail_button_player(this)'></td><td><img src='img/trash.png' alt='delete' class='delete_edit_player' onclick='deletePlayer(this)'></td><td><img src='img/edit.png' alt='edit' class='delete_edit_player' onclick='edit_button_player(this)'></tr>"
+                var str = "<tr><td class='headcol'><img class='player_img' src='" + players[i].profile_picture + "' alt='Player'></td><td>" + players[i].firstname + "</td><td>" + players[i].lastname + "</td><td>" + players[i].position + "</td><td><input type='button' value='Detail' class='btn btn-primary' onclick='detail_button_player(this)'></td><td><img src='img/trash.png' alt='delete' class='delete_edit_player' onclick='deletePlayer(this)'></td><td><img src='img/edit.png' alt='edit' class='delete_edit_player' onclick='edit_button_player(this)'></tr>"
                 document.getElementById("players_list").innerHTML += str;
             }
         }
@@ -738,11 +738,12 @@ function loadHome(){
 
             // Find matches playing today and display on home page
             var stored_games = myData.games;
-
+            var game_today = false;
             today = month + '/' + date;
             console.log(stored_games);
             for(var i = 0; i < stored_games.length; i++){
                 if(today == stored_games[i].date){
+                    game_today = true;
                     var day = JSON.parse(JSON.stringify(stored_games[i].date));
                     var time = JSON.parse(JSON.stringify(stored_games[i].time));
                     var loc = JSON.parse(JSON.stringify(stored_games[i].location));
@@ -754,6 +755,10 @@ function loadHome(){
                         "My Team vs. " + opp + "<br>" +
                         status + " Game <br>";
                 }
+            }
+
+            if(game_today == false){
+                document.getElementById('today_game').innerHTML = "<br><h3>No Games Today!</h3>";
             }
         }
     })
