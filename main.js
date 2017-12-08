@@ -125,6 +125,17 @@ function login(){
     console.log(firebase.auth().currentUser);
 }
 
+/* function to sign out*/
+function signout(){
+    firebase.auth().signOut().then(function() {
+        alert("Sign-out successful");
+    // Sign-out successful.
+    }).catch(function(error) {
+    // An error happened.
+    });
+}
+
+
 /*
     * From sign up page, we can create one account and use it for login. 
     * Everytime when you successfully create an account from sign up page, the 
