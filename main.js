@@ -515,7 +515,7 @@ function addPlayer(){
                 games: myData.games,	
                 players: players
             }).then(function(){
-                console.log("game successfully edited!");
+                console.log("player successfully added!");
                 window.location = 'players.html';
             });
         }
@@ -530,13 +530,24 @@ function addPlayer(){
     * Function to show the players in the player page (create)
 */
 function showPlayer(){
-    var players;
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));    
 
-    players = JSON.parse(localStorage.getItem('stored_players'));
-    for(var i = 0; i < players.length; i++){
-        var str = "<tr><td class='headcol'><img class='player_img' src='" + players[i].profile_picture + "' alt='Temporary Player's Picture'></td><td>" + players[i].firstname + "</td><td>" + players[i].lastname + "</td><td>" + players[i].position + "</td><td><input type='button' value='Detail' class='btn btn-primary' onclick='detail_button_player(this)'></td><td><input type='button' value='Delete' class='btn btn-primary' onclick='deletePlayer(this)'></td><td><input type='button' value='Edit' class='btn btn-primary' onclick='edit_button_player(this)'></tr>"
-        document.getElementById("players_list").innerHTML += str;
-    }
+    // getting players from database
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            var players = myData.players;
+            console.log(players);
+
+            for(var i = 0; i < players.length; i++){
+                var str = "<tr><td class='headcol'><img class='player_img' src='" + players[i].profile_picture + "' alt='Temporary Player's Picture'></td><td>" + players[i].firstname + "</td><td>" + players[i].lastname + "</td><td>" + players[i].position + "</td><td><input type='button' value='Detail' class='btn btn-primary' onclick='detail_button_player(this)'></td><td><input type='button' value='Delete' class='btn btn-primary' onclick='deletePlayer(this)'></td><td><input type='button' value='Edit' class='btn btn-primary' onclick='edit_button_player(this)'></tr>"
+                document.getElementById("players_list").innerHTML += str;
+            }
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    });
 }
 
 /*
@@ -562,7 +573,7 @@ function deletePlayer(r){
                 games: myData.games,
                 players: players
             }).then(function(){
-                console.log("game successfully deleted!");
+                console.log("player successfully deleted!");
             });
         }
     })
