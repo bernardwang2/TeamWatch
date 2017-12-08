@@ -260,7 +260,7 @@ function showSchedule(){
             console.log(games);
 
             for(var i = 0; i < games.length; i++){
-                var str = "<li><img src='img/trash.png' alt='delete' class='delete' onclick='deleteGame()'><a href='game.html'>" + games[i].date + " - My Team vs. " + games[i].opponent + "</a><img src='img/edit.png' alt='edit' class='edit' onclick='editGame()'></li>"
+                var str = "<li><img src='img/trash.png' alt='delete' class='delete' onclick='deleteGame()'><a href='game.html' onclick='editGame()'>" + games[i].date + " - My Team vs. " + games[i].opponent + "</a><img src='img/edit.png' alt='edit' class='edit' onclick='editGame()'></li>"
                 document.getElementById("game_list").innerHTML += str;
             }
         }
@@ -269,6 +269,26 @@ function showSchedule(){
         console.log("error: " + error);
     });
 
+}
+
+/* 
+    * Function to enter game when clicked on from schedule
+*/
+function editGame(){
+    var ind;    // storing index of clicked list item
+    var parent = document.getElementsByTagName('ul')[0];
+    // Trying to get the index of the list item chosen for deletion
+    parent.onclick = function (e) {
+        var el = e.target;
+        while (el != document.body && el.tagName.toLowerCase() != "li") {
+            el = el.parentNode;
+        }
+
+        ind = [].indexOf.call(el.parentNode.children, el);
+        //alert("IND = " + ind);
+
+        localStorage.setItem('index', ind);
+    }
 }
 
 
@@ -740,6 +760,26 @@ function saveEditStats(){
 function loadGame(){
     var players = JSON.parse(localStorage.getItem('stored_players'));
     var el = document.getElementById("game_list");
+    
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
+    var ind = localStorage.getItem('index');
+    
+    // getting games from database
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            var games = myData.games;
+            console.log(games);
+
+            document.getElementById('game_info').innerHTML = "<h4>" + games[ind].date + "," +games[ind].time + "</h4><h4>" + games[ind].location + " (" + games[ind].status + ")" + "</h4><h4>" 
+                + "My Team vs." + games[ind].opponent + "</h4>";
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    });
+    
+    
     // loop through every player, display live stats
     for(var i = 0; i < players.length; i++){
         var str = "<tr>" + 
