@@ -228,10 +228,12 @@ function addGame(){
             if(doc && doc.exists){
                 const myData = doc.data();
                 var _games = myData.games;
+                var _players = myData.players;
                 console.log(_games);
 
                 // obejct for new game
                 var new_game = {
+                    players: _players,
                     date: n_date,
                     location: n_location,
                     opponent: n_opponent,
@@ -600,6 +602,16 @@ function edit_button_player(r){
     window.location = "edit_player.html";
 }
 
+/* 
+    * Function to edit players' stats when clicked on from game
+*/
+function edit_button_game_player(r){
+    var i = r.parentNode.parentNode.rowIndex;
+    i -= 1;
+    localStorage.setItem('stored_player_index', i);
+    window.location = "edit_player_stats.html";
+}
+
 /* Edits a players' live stats */
 function detail_button_player(r){
     var i = r.parentNode.parentNode.rowIndex;
@@ -767,11 +779,64 @@ function loadHome(){
 */
 
 function loadPlayerProfile(){
-    
     var players = JSON.parse(localStorage.getItem('stored_players'));
     var i = localStorage.getItem('stored_player_index');
 
     document.getElementById('player_info').innerHTML = "<h2><img class='player_img' src='" + players[i].profile_picture + "' alt='Temporary Player's Picture'></h2><h4>" + players[i].fullname + "</h4><h4>" + players[i].dateOfBirth + "</h4><h4>" + players[i].position + "</h4><h4> captain: " + players[i].captain + "</h4>";
+    
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
+    
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            var d_game = myData.games;
+            var d_players = myData.players;
+            for(var j = 0; j < d_game.length; j++){
+                if(d_game[j].players[i].fullname == players[i].fullname){
+                    console.log(d_game[j].players[i]);
+                    players[i].goals = +players[i].goals + +d_game[j].players[i].goals;
+                    players[i].fouls = +players[i].fouls + +d_game[j].players[i].fouls;
+                    players[i].yellowcards = +players[i].yellowcards + +d_game[j].players[i].yellowcards;
+                    players[i].redcards = +players[i].redcards + +d_game[j].players[i].redcards;
+                    players[i].shots = +players[i].shots + +d_game[j].players[i].shots;
+                    players[i].cornerkicks = +players[i].cornerkicks + +d_game[j].players[i].cornerkicks;
+                    players[i].goalkicks = +players[i].goalkicks + +d_game[j].players[i].goalkicks;
+                    players[i].penaltykicks = +players[i].penaltykicks + +d_game[j].players[i].penaltykicks;
+                    players[i].throwins = +players[i].throwins + +d_game[j].players[i].throwins;
+                    players[i].gamesplayed = +players[i].gamesplayed + +d_game[j].players[i].gamesplayed;
+                    console.log(d_game[j].players[i].yellowcards);
+                    console.log(players[i].yellowcards);
+                }
+            }
+            
+            console.log(players[i]);
+            
+            d_players[i] = players[i];
+            
+            docRef.set({
+                games: d_game,
+                players: d_players
+            }).then(function(){
+                    var body_str = "<tr>" + 
+                    "<td>" + players[i].goals + "</td>" + 
+                    "<td>" + players[i].fouls + "</td>" + 
+                    "<td>" + players[i].yellowcards + "</td>" + 
+                    "<td>" + players[i].redcards + "</td>" + 
+                    "<td>" + players[i].shots + "</td>" + 
+                    "<td>" + players[i].cornerkicks + "</td>" + 
+                    "<td>" + players[i].goalkicks + "</td>" + 
+                    "<td>" + players[i].penaltykicks + "</td>" + 
+                    "<td>" + players[i].throwins + "</td>" + 
+                    "<td>" + players[i].gamesplayed + "</td>" + 
+                    "</tr>";
+
+                    document.getElementById('player-profile-body').innerHTML = body_str;
+            })  
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    }); 
     
     /*
     var str = players[i].firstname + " " + players[i].lastname + " #" + players[i].jersey;
@@ -780,44 +845,49 @@ function loadPlayerProfile(){
     document.getElementById('playerPosition').innerHTML = players[i].position;
     */
 
-    var body_str = "<tr>" + 
-    "<td>" + players[i].goals + "</td>" + 
-    "<td>" + players[i].fouls + "</td>" + 
-    "<td>" + players[i].yellowcards + "</td>" + 
-    "<td>" + players[i].redcards + "</td>" + 
-    "<td>" + players[i].shots + "</td>" + 
-    "<td>" + players[i].cornerkicks + "</td>" + 
-    "<td>" + players[i].goalkicks + "</td>" + 
-    "<td>" + players[i].penaltykicks + "</td>" + 
-    "<td>" + players[i].throwins + "</td>" + 
-    "<td>" + players[i].gamesplayed + "</td>" + 
-    "</tr>";
-
-    document.getElementById('player-profile-body').innerHTML = body_str;
 }
 
-function loadEditStats(){
-    // Getting array from local storage, and deleting the displayed list item
-    var ind = localStorage.getItem('stored_player_index');
-    var players = JSON.parse(localStorage.getItem('stored_players'));
-    
-    document.getElementById('player_info').innerHTML = "<h2><img class='player_img' src='" + players[ind].profile_picture + "' alt='Temporary Player's Picture'></h2><h4>" + players[ind].fullname + "</h4><h4>" + players[ind].dateOfBirth + "</h4><h4>" + players[ind].position + "</h4><h4> captain: " + players[ind].captain + "</h4>";
+//LOAD PLAYER STATS FOR EACH GAME
 
-    // filling placeholder values with current values
-    document.getElementById('goals').value = players[ind].goals;
-    document.getElementById('fouls').value = players[ind].fouls;
-    document.getElementById('yellowcards').value = players[ind].yellowcards;
-    document.getElementById('redcards').value = players[ind].redcards;
-    document.getElementById('shots').value = players[ind].shots;
-    document.getElementById('cornerkicks').value = players[ind].cornerkicks;
-    document.getElementById('goalkicks').value = players[ind].goalkicks;
-    document.getElementById('penaltykicks').value = players[ind].penaltykicks;
-    document.getElementById('throwins').value = players[ind].throwins;
-    document.getElementById('gamesplayed').value = players[ind].gamesplayed;
+function loadEditStats(){
+    var i = localStorage.getItem('index');
+    var ind = localStorage.getItem('stored_player_index');
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
+    
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            var games = myData.games;
+            console.log(games);
+            
+            document.getElementById('player_info').innerHTML = "<h2><img class='player_img' src='" + games[i].players[ind].profile_picture + "' alt='Temporary Player's Picture'></h2><h4>" + games[i].players[ind].fullname + "</h4><h4>" + games[i].players[ind].dateOfBirth + "</h4><h4>" + games[i].players[ind].position + "</h4><h4> captain: " + games[i].players[ind].captain + "</h4>";
+
+            // filling placeholder values with current values
+            document.getElementById('goals').value = games[i].players[ind].goals;
+            document.getElementById('fouls').value = games[i].players[ind].fouls;
+            document.getElementById('yellowcards').value = games[i].players[ind].yellowcards;
+            document.getElementById('redcards').value = games[i].players[ind].redcards;
+            document.getElementById('shots').value = games[i].players[ind].shots;
+            document.getElementById('cornerkicks').value = games[i].players[ind].cornerkicks;
+            document.getElementById('goalkicks').value = games[i].players[ind].goalkicks;
+            document.getElementById('penaltykicks').value = games[i].players[ind].penaltykicks;
+            document.getElementById('throwins').value = games[i].players[ind].throwins;
+            document.getElementById('gamesplayed').value = games[i].players[ind].gamesplayed;
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    });   
+    
+
     
 }
 
 function saveEditStats(){
+    var ind = localStorage.getItem('stored_player_index');
+    var i = localStorage.getItem('index');
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
+
     var n_goals = document.getElementById('goals').value;
     var n_fouls = document.getElementById('fouls').value;
     var n_yellowcards = document.getElementById('yellowcards').value;
@@ -841,10 +911,40 @@ function saveEditStats(){
     players[ind].penaltykicks = n_penaltykicks;
     players[ind].throwins = n_throwins;
     players[ind].gamesplayed = n_gamesplayed;
-    
-    localStorage.setItem('stored_players', JSON.stringify(players));
-    
-    window.location = "game.html";
+
+    if(n_goals == '' || n_fouls == '' || n_yellowcards == '' || n_redcards == '' || n_shots =='' || n_cornerkicks =='' || n_goalkicks == '' || n_penaltykicks == ''|| n_throwins == '' || n_gamesplayed == ''){
+        alert("All fields must be filled");
+    }else{
+        docRef.get().then(function(doc){
+            if(doc && doc.exists){
+                const myData = doc.data();
+                var games = myData.games;
+                console.log(games);
+                games[i].players[ind].goals = n_goals;
+                games[i].players[ind].fouls = n_fouls;
+                games[i].players[ind].yellowcards = n_yellowcards;
+                games[i].players[ind].redcards = n_redcards;
+                games[i].players[ind].shots = n_shots;
+                games[i].players[ind].cornerkicks = n_cornerkicks;
+                games[i].players[ind].goalkicks = n_goalkicks;
+                games[i].players[ind].penaltykicks = n_penaltykicks;
+                games[i].players[ind].throwins = n_throwins;
+                games[i].players[ind].gamesplayed = n_gamesplayed;
+                               
+                // filling placeholder values with current values
+                docRef.set({
+                    games: games,
+                    players: myData.players
+                }).then(function(){
+                    console.log("players stats updated!");
+                    window.location = 'game.html';
+                })          
+            }
+        })
+        .catch(function(error){
+            console.log("error: " + error);
+        });
+    }
 }
 
 
@@ -872,6 +972,37 @@ function loadGame(){
     });
     
     
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            var games = myData.games;
+            console.log(games);
+            console.log(games[ind].players);
+            
+            for(var i = 0; i < games[ind].players.length; i++){
+                var str = "<tr>" + 
+                    "<td class='headcol'><p onclick='player_index(this)'>" + games[ind].players[i].firstname + " " + games[ind].players[i].lastname + "</p></td>" + 
+                    "<td>" + games[ind].players[i].goals + "</td>" + 
+                    "<td>" + games[ind].players[i].fouls + "</td>" + 
+                    "<td>" + games[ind].players[i].yellowcards + "</td>" + 
+                    "<td>" + games[ind].players[i].redcards + "</td>" + 
+                    "<td>" + games[ind].players[i].shots + "</td>" + 
+                    "<td>" + games[ind].players[i].cornerkicks + "</td>" + 
+                    "<td>" + games[ind].players[i].goalkicks + "</td>" + 
+                    "<td>" + games[ind].players[i].penaltykicks + "</td>" + 
+                    "<td>" + games[ind].players[i].throwins + "</td>" + 
+                    "<td>" + games[ind].players[i].gamesplayed + "</td>" + 
+                    "<td><input type='button' value='Edit' class='btn btn-primary' onclick='edit_button_game_player(this)'></tr>";
+
+                el.innerHTML += str;
+            }
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    });
+
+    /*
     // loop through every player, display live stats
     for(var i = 0; i < players.length; i++){
         var str = "<tr>" + 
@@ -890,6 +1021,7 @@ function loadGame(){
 
         el.innerHTML += str;
     }
+    */
 }
 
 /*
@@ -906,4 +1038,8 @@ function getBase64(file) {
     // reader.onerror = function (error) {
     //     console.log('Error: ', error);
     // };
+}
+
+function goBack() {
+    window.history.back();
 }
