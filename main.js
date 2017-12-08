@@ -1,3 +1,11 @@
+// Check if service workers are supported by user's browsers
+if ('serviceWorker' in navigator) {
+    // Use the window load event to keep the page load performant
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
+
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyA-duDNTd4C2cNJ40JiqYglcWrSeR0n9uU",
@@ -733,7 +741,7 @@ function loadHome(){
     } 
 
     // Find matches playing today and display on home page
-    var stored_games = localStorage.getItem('stored_games');
+    var stored_games = JSON.parse(localStorage.getItem('stored_games'));
 
     today = month + '/' + date;
     console.log(stored_games);
