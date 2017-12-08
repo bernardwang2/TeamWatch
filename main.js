@@ -380,6 +380,7 @@ function saveGame(){
         docRef.get().then(function(doc){
             if(doc && doc.exists){
                 const myData = doc.data();
+                stored_games[ind].players = myData.games[ind].players;
                 console.log(stored_games);
                 // updating firestore database
                 docRef.set({
