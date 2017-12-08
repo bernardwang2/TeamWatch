@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="theme-color" content="#337ab7"/>     
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>TeamWatch</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="manifest" href="/manifest.json">    
+</head>
+    
+<body>
+    <h1 class="title_text">Sign Up</h1>
+    <form method="post" name="sign_form" id="sign_form" class="text-center">
+        <h3 style="margin-top: 10vh">What's your team name?</h3>
+        <input type="text" name="firstName" id="sign_teamName" placeholder="Team Name" class="form-control">
+
+        <h3>Add your team picture!</h3><br>
+        <div class="form-group" style="align-content:center;">
+            <input type='file' id="upload_image"/><br>
+            <button id="button_confirm">confirm</button>   
+        </div>
+        <br>
+
+        <a type="button" class="btn btn-primary" value="Submit" id ="submit" onclick="signTeam()">Submit</a>
+        <a href="signup.html" class="btn btn-primary" id="back">Back</a>
+
+    </form>
+
+    <footer class="footer" style="background:#337ab7;">
+            <div class="container">
+                <img src='img/soccer_icon.png' alt="soccer ball">
+                <span class="footer_text" style="color:white">
+                    TeamWatch
+                </span>
+            </div>
+    </footer>
+    
+    <script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.7.0/firebase-firestore.js"></script>
+	<script src="main.js"></script>
+
+</body>
+</html>

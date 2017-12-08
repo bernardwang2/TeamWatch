@@ -226,6 +226,11 @@ a:hover{
     left: 5vw; 
 }
 
+.delete_edit_player{
+    width: 3vh;
+    padding-top: 1vh;
+}
+
 /**************** SCHEDULE **************/
 .schedule ul {
     position: absolute;

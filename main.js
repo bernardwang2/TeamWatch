@@ -131,8 +131,31 @@ function signUp(){
             // [END_EXCLUDE]
         }).then(function(user){
             if(user){
-                window.location = "index.html";
+                localStorage.setItem('uid', user.uid);
+                window.location = "signup_team.html";
                 return true;
+            }
+        });
+    }
+}
+
+function signTeam(){
+    var _teamName = document.getElementById('sign_teamName').value;
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
+    
+    if(_teamName == ''){
+        alert("All fields must be filled");
+    }else{
+        docRef.get().then(function(doc){
+            if(doc && doc.exists){
+                docRef.set({
+                    teamName: _teamName
+                }).then(function(){
+                    console.log("successfully added teamname");
+                    window.location = 'index.html';
+                }).catch(function(err){
+                    console.log("error " + err);
+                })
             }
         });
     }
@@ -427,7 +450,7 @@ function addPlayer(){
     var img_data = localStorage.getItem('imgData');
     localStorage.removeItem("imgData");
     if(img_data === null){
-        img_data = "img/cat.jpg";
+        img_data = "img/cat.png";
     }
     
     if(f_name == '' || l_name == '' || dob == '' || j_number == '' || id_p == 'Position'){
@@ -506,7 +529,7 @@ function showPlayer(){
             console.log(players);
 
             for(var i = 0; i < players.length; i++){
-                var str = "<tr><td class='headcol'><img class='player_img' src='" + players[i].profile_picture + "' alt='Temporary Player's Picture'></td><td>" + players[i].firstname + "</td><td>" + players[i].lastname + "</td><td>" + players[i].position + "</td><td><input type='button' value='Detail' class='btn btn-primary' onclick='detail_button_player(this)'></td><td><input type='button' value='Delete' class='btn btn-primary' onclick='deletePlayer(this)'></td><td><input type='button' value='Edit' class='btn btn-primary' onclick='edit_button_player(this)'></tr>"
+                var str = "<tr><td class='headcol'><img class='player_img' src='" + players[i].profile_picture + "' alt='Temporary Player's Picture'></td><td>" + players[i].firstname + "</td><td>" + players[i].lastname + "</td><td>" + players[i].position + "</td><td><input type='button' value='Detail' class='btn btn-primary' onclick='detail_button_player(this)'></td><td><img src='img/trash.png' alt='delete' class='delete_edit_player' onclick='deletePlayer(this)'></td><td><img src='img/edit.png' alt='edit' class='delete_edit_player' onclick='edit_button_player(this)'></tr>"
                 document.getElementById("players_list").innerHTML += str;
             }
         }
