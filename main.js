@@ -416,6 +416,8 @@ function deleteGame(){
     * Function to add player to page
 */
 function addPlayer(){
+    // connection with database
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
 
     var f_name = document.getElementById("firstName").value;
     var l_name = document.getElementById("lastName").value;
@@ -443,32 +445,54 @@ function addPlayer(){
     else{
         con_captain = "no";
     }
-    
-    var new_player = {
-        fullname: full_name,
-        firstname: f_name,
-        lastname: l_name,
-        position: id_p,
-        jersey: j_number,
-        dateOfBirth: dob,
-        captain: con_captain,
-        profile_picture: img_data,
-        goals: "0",
-        fouls: "0",
-        yellowcards: "0",
-        redcards: "0",
-        shots: "0",
-        cornerkicks: "0",
-        goalkicks: "0",
-        penaltykicks: "0",
-        throwins: "0",
-        gamesplayed: "0"
-    };
-    
-    players.push(new_player);    
-    localStorage.setItem('stored_players', JSON.stringify(players));
-    
-    window.location = "players.html";
+
+    // Updating firestore database
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            var database_games = myData.games;
+            var players = myData.players;
+
+            var new_player = {
+                fullname: full_name,
+                firstname: f_name,
+                lastname: l_name,
+                position: id_p,
+                jersey: j_number,
+                dateOfBirth: dob,
+                captain: con_captain,
+                profile_picture: img_data,
+                goals: "0",
+                fouls: "0",
+                yellowcards: "0",
+                redcards: "0",
+                shots: "0",
+                cornerkicks: "0",
+                goalkicks: "0",
+                penaltykicks: "0",
+                throwins: "0",
+                gamesplayed: "0"
+            };
+            
+            // pushing new game to temp array
+            players.push(new_player);
+            console.log(players);
+            localStorage.setItem('stored_players', JSON.stringify(players));
+
+            // updating firestore database
+            docRef.set({
+                games: myData.games,	
+                players: players
+            }).then(function(){
+                console.log("game successfully edited!");
+                window.location = 'players.html';
+            });
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    });
+
 }
 
 /* 
@@ -478,8 +502,6 @@ function showPlayer(){
     var players;
 
     players = JSON.parse(localStorage.getItem('stored_players'));
-    console.log(players);
-    //console.log(players);
     for(var i = 0; i < players.length; i++){
         var str = "<tr><td class='headcol'><img class='player_img' src='" + players[i].profile_picture + "' alt='Temporary Player's Picture'></td><td>" + players[i].firstname + "</td><td>" + players[i].lastname + "</td><td>" + players[i].position + "</td><td><input type='button' value='Detail' class='btn btn-primary' onclick='detail_button_player(this)'></td><td><input type='button' value='Delete' class='btn btn-primary' onclick='deletePlayer(this)'></td><td><input type='button' value='Edit' class='btn btn-primary' onclick='edit_button_player(this)'></tr>"
         document.getElementById("players_list").innerHTML += str;
@@ -490,12 +512,32 @@ function showPlayer(){
     * Function to delete player when icon is clicked on players
 */
 function deletePlayer(r){
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
+
     var i = r.parentNode.parentNode.rowIndex;
     i -= 1;
     var players = JSON.parse(localStorage.getItem('stored_players'));
     players.splice(i, 1);   // removing the element in array @ index
+
     localStorage.setItem('stored_players', JSON.stringify(players));
     document.getElementById("players_list").deleteRow(i);
+ 
+    // Updating firestore database
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            // updating firestore database
+            docRef.set({
+                games: myData.games,
+                players: players
+            }).then(function(){
+                console.log("game successfully deleted!");
+            });
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    });
 }
 
 /* 
@@ -551,18 +593,16 @@ function loadEditPlayer(){
 */
 
 function savePlayer(){
+    var docRef = db.collection('users').doc(localStorage.getItem('uid'));
+    var ind = localStorage.getItem('stored_player_index');
+    var players = JSON.parse(localStorage.getItem('stored_players'));
+
     var f_name = document.getElementById("firstName").value;
     var l_name = document.getElementById("lastName").value;
     var dob = document.getElementById("dateOfBirth").value;
     var j_number = document.getElementById("jersey").value;
     var id_p = document.getElementById("id_position_select").options[document.getElementById('id_position_select').selectedIndex].text;
     var cap = document.getElementById("captain").checked;
-    var full_name = f_name + " " + l_name;
-    if(f_name == '' || l_name == '' || dob == '' || j_number == '' || id_p == 'Position'){
-        alert("All the field must be filled");
-        return false;
-    }
-    
     var con_captain;
     if(cap.checked == true){
         con_captain = "yes";
@@ -570,26 +610,48 @@ function savePlayer(){
     else{
         con_captain = "no";
     }
-    
-    var ind = localStorage.getItem('stored_player_index');
-    var players = JSON.parse(localStorage.getItem('stored_players'));
-    players[ind].firstname = f_name;
-    players[ind].lastname = l_name;
-    players[ind].position = id_p;
-    players[ind].jersey = j_number;
-    players[ind].dateOfBirth = dob;
-    players[ind].captain = con_captain;
-    players[ind].fullname = full_name;
-    //image
-    var img_data = localStorage.getItem('imgData');
-    localStorage.removeItem("imgData");
-    if(img_data != players[ind].profile_picture){
-        players[ind].profile_picture = img_data;
+
+    var full_name = f_name + " " + l_name;
+    if(f_name == '' || l_name == '' || dob == '' || j_number == '' || id_p == 'Position'){
+        alert("All the field must be filled");
+        return false;
     }
-    
+    else{
+        players[ind].firstname = f_name;
+        players[ind].lastname = l_name;
+        players[ind].position = id_p;
+        players[ind].jersey = j_number;
+        players[ind].dateOfBirth = dob;
+        players[ind].captain = con_captain;
+        players[ind].fullname = full_name;
+        //image
+        var img_data = localStorage.getItem('imgData');
+        localStorage.removeItem("imgData");
+        if(img_data != players[ind].profile_picture){
+            players[ind].profile_picture = img_data;
+        }    
+    }
+
+
     localStorage.setItem('stored_players', JSON.stringify(players));
     
-    window.location = "players.html";
+    // Updating firestore database
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+            // updating firestore database
+            docRef.set({
+                games: myData.games,
+                players: players
+            }).then(function(){
+                console.log("player successfully edited!");
+                window.location = "players.html";
+            });
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    });
 }
 
 /*
