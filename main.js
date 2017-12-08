@@ -50,68 +50,7 @@ function login(){
             }
             else{
                 db.collection('users').doc(user.uid).set({
-                    players: [
-                        {
-                            firstname: "John",
-                            lastname: "Wick",
-                            position: "Forward",
-                            fullname: "John Wick",
-                            jersey: "1",
-                            dateOfBirth: "09/11/1995",
-                            captain: "yes",
-                            profile_picture: "img/cat.jpg",
-                            goals: 0,
-                            fouls: 0,
-                            yellowcards: 0,
-                            redcards: 0,
-                            shots: 0,
-                            cornerkicks: 0,
-                            goalkicks: 0,
-                            penaltykicks: 0,
-                            throwins: 0,
-                            gamesplayed: 0
-                        },
-                        {
-                            firstname: "Marry",
-                            lastname: "Wick",
-                            position: "Goal Keeper",
-                            fullname: "Mary Wick",
-                            jersey: "2",
-                            dateOfBirth: "09/11/1995",
-                            captain: "no",
-                            profile_picture: "img/cat.jpg",
-                            goals: 0,
-                            fouls: 0,
-                            yellowcards: 0,
-                            redcards: 0,
-                            shots: 0,
-                            cornerkicks: 0,
-                            goalkicks: 0,
-                            penaltykicks: 0,
-                            throwins: 0,
-                            gamesplayed: 0
-                        },
-                        {
-                            firstname: "John Jr",
-                            lastname: "Wick",
-                            position: "Center Back",
-                            fullname: "John Jr Wick",
-                            jersey: "3",
-                            dateOfBirth: "09/11/1995",
-                            captain: "no",
-                            profile_picture: "img/cat.jpg",
-                            goals: 0,
-                            fouls: 0,
-                            yellowcards: 0,
-                            redcards: 0,
-                            shots: 0,
-                            cornerkicks: 0,
-                            goalkicks: 0,
-                            penaltykicks: 0,
-                            throwins: 0,
-                            gamesplayed: 0
-                        }
-                    ],
+                    players: [],
                     games: []
                 })
                 .then(function(){
@@ -230,7 +169,24 @@ function addGame(){
                 var _games = myData.games;
                 var _players = myData.players;
                 console.log(_games);
-
+                
+                for(var ind = 0; ind < _players.length; ind++){        
+                    _players[ind].goals = "0";
+                    _players[ind].fouls = "0";
+                    _players[ind].yellowcards = "0";
+                    _players[ind].redcards = "0";
+                    _players[ind].shots = "0";
+                    _players[ind].cornerkicks = "0";
+                    _players[ind].goalkicks = "0";
+                    _players[ind].penaltykicks = "0";
+                    _players[ind].throwins = "0";
+                    _players[ind].gamesplayed = "0";
+                }
+                console.log(_players[0]);
+                debugger;
+                console.log(_players[0]);
+                
+                
                 // obejct for new game
                 var new_game = {
                     players: _players,
