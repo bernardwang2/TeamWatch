@@ -15,18 +15,17 @@ var config = {
     storageBucket: "cse134b-hw5-52381.appspot.com",
     messagingSenderId: "641375253114"
 };
-
 firebase.initializeApp(config);
+// Initializing firestore
 var db = firebase.firestore();
 
-var curr_user;
+
 /* Testing username: username
     * Testing password: password
     * From sign up page, we can create one account and use it for login. 
     * Everytime when you successfully create an account from sign up page, the 
     * previous account will be deleted for now.
 */
-
 function loadNav(){
     var el = document.getElementById('team_name');
 
@@ -41,29 +40,25 @@ function login(){
 
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
         // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
         alert("Incorrect username/password");
         // ...
     }).then(function(user){
+        // create new user document with empty player/game arrays
+        // using generated uid from firebase
         var docRef = db.collection('users').doc(user.uid);
-        //console.log(user.uid);
         // if user document already exists, do nothing
         docRef.get().then(function(doc){
             if(doc.exists){
                 var myData = doc.data();
                 localStorage.setItem('stored_teamname', myData.teamName);
                 localStorage.setItem('uid', user.uid);
-                console.log("Document successfully written!");
                 window.location = 'home.html';
             }
-            //console.log(curr_user);
         })
-        // create new user document with empty player/game arrays
-        // using generated uid from firebase
+        
     });
-    console.log(firebase.auth().currentUser);
 }
+
 
 /* function to sign out*/
 function signout(){
@@ -71,7 +66,7 @@ function signout(){
         alert("Sign-out successful");
     // Sign-out successful.
     }).catch(function(error) {
-    // An error happened.
+        console.log("error: " + error);
     });
 }
 
@@ -120,7 +115,6 @@ function signUp(){
             } else {
               alert(errorMessage);
             }
-            console.log(error);
             // [END_EXCLUDE]
         }).then(function(user){
             if(user){
@@ -147,7 +141,6 @@ function signTeam(){
             })
             .then(function(){
                 localStorage.setItem('stored_teamname', _teamName);
-                console.log("successfully added teamname");
                 window.location = 'index.html';
             })
             .catch(function(error){
@@ -188,7 +181,6 @@ function addGame(){
                 const myData = doc.data();
                 var _games = myData.games;
                 var _players = myData.players;
-                console.log(_games);
                 
                 for(var ind = 0; ind < _players.length; ind++){        
                     _players[ind].goals = "0";
@@ -202,12 +194,8 @@ function addGame(){
                     _players[ind].throwins = "0";
                     _players[ind].gamesplayed = "0";
                 }
-                console.log(_players[0]);
-                debugger;
-                console.log(_players[0]);
                 
-                
-                // obejct for new game
+                // object for new game
                 var new_game = {
                     players: _players,
                     date: n_date,
@@ -219,7 +207,6 @@ function addGame(){
 
                 // pushing new game to temp array
                 _games.push(new_game);
-                console.log(_games);
                 localStorage.setItem('stored_games', JSON.stringify(_games));
 
                 // updating firestore database
@@ -228,7 +215,6 @@ function addGame(){
                     players: myData.players,
                     teamName: localStorage.getItem('stored_teamname')                    
                 }).then(function(){
-                    console.log("game successfully added!");
                     window.location = 'schedule.html';
                 });
             }
@@ -255,7 +241,6 @@ function showSchedule(){
         if(doc && doc.exists){
             const myData = doc.data();
             var games = myData.games;
-            console.log(games);
 
             if(games.length != 0){
                 for(var i = 0; i < games.length; i++){
@@ -326,9 +311,6 @@ function loadEditGame(){
     var ind = localStorage.getItem('index');
     var games = JSON.parse(localStorage.getItem('stored_games'));
 
-    //console.log(ind);
-    //console.log(games);
-
     // filling placeholder values with current values
     document.getElementById('opponent').value = games[ind].opponent;
     document.getElementById('date').value = games[ind].date;
@@ -376,14 +358,12 @@ function saveGame(){
             if(doc && doc.exists){
                 const myData = doc.data();
                 stored_games[ind].players = myData.games[ind].players;
-                console.log(stored_games);
                 // updating firestore database
                 docRef.set({
                     games: stored_games,
                     players: myData.players,
                     teamName: localStorage.getItem('stored_teamname')
                 }).then(function(){
-                    console.log("game successfully edited!");
                     window.location = 'schedule.html';
                 });
             }
@@ -428,8 +408,6 @@ function deleteGame(){
                 games: stored_games,
                 players: myData.players,
                 teamName: localStorage.getItem('stored_teamname')                
-            }).then(function(){
-                console.log("game successfully deleted!");
             });
         }
     })
@@ -502,7 +480,6 @@ function addPlayer(){
             
             // pushing new game to temp array
             players.push(new_player);
-            console.log(players);
             localStorage.setItem('stored_players', JSON.stringify(players));
 
             // updating firestore database
@@ -511,7 +488,6 @@ function addPlayer(){
                 players: players,
                 teamName: localStorage.getItem('stored_teamname')                
             }).then(function(){
-                console.log("player successfully added!");
                 window.location = 'players.html';
             });
         }
@@ -533,7 +509,6 @@ function showPlayer(){
         if(doc && doc.exists){
             const myData = doc.data();
             var players = myData.players;
-            console.log(players);
 
             if(players.length != 0){
                 for(var i = 0; i < players.length; i++){
@@ -573,8 +548,6 @@ function deletePlayer(r){
                 games: myData.games,
                 players: players,
                 teamName: localStorage.getItem('stored_teamname')                
-            }).then(function(){
-                console.log("player successfully deleted!");
             });
         }
     })
@@ -664,11 +637,13 @@ function savePlayer(){
         con_captain = "no";
     }
 
+    // If any of the form fields empty, alert error
     var full_name = f_name + " " + l_name;
     if(f_name == '' || l_name == '' || dob == '' || j_number == '' || id_p == 'Position'){
         alert("All the field must be filled");
         return false;
     }
+    // Saves player into player array
     else{
         players[ind].firstname = f_name;
         players[ind].lastname = l_name;
@@ -698,7 +673,6 @@ function savePlayer(){
                 players: players,
                 teamName: localStorage.getItem('stored_teamname')                
             }).then(function(){
-                console.log("player successfully edited!");
                 window.location = "players.html";
             });
         }
@@ -714,7 +688,6 @@ function savePlayer(){
 
 function loadHome(){
     var curr_id = localStorage.getItem('uid');
-    console.log(curr_id);
     var docRef = db.collection('users').doc(curr_id);
 
     // Grabbing games and players arrays from database
@@ -744,7 +717,6 @@ function loadHome(){
             var stored_games = myData.games;
             var game_today = false;
             today = month + '/' + date;
-            console.log(stored_games);
             for(var i = 0; i < stored_games.length; i++){
                 if(today == stored_games[i].date){
                     game_today = true;
@@ -775,7 +747,6 @@ function loadHome(){
 /* 
     * Function to show the players' profile (create)
 */
-
 function loadPlayerProfile(){
     var players = JSON.parse(localStorage.getItem('stored_players'));
     var i = localStorage.getItem('stored_player_index');
@@ -791,7 +762,6 @@ function loadPlayerProfile(){
             var d_players = myData.players;
             for(var j = 0; j < d_game.length; j++){
                 if(d_game[j].players[i].fullname == players[i].fullname){
-                    console.log(d_game[j].players[i]);
                     players[i].goals = +players[i].goals + +d_game[j].players[i].goals;
                     players[i].fouls = +players[i].fouls + +d_game[j].players[i].fouls;
                     players[i].yellowcards = +players[i].yellowcards + +d_game[j].players[i].yellowcards;
@@ -802,13 +772,8 @@ function loadPlayerProfile(){
                     players[i].penaltykicks = +players[i].penaltykicks + +d_game[j].players[i].penaltykicks;
                     players[i].throwins = +players[i].throwins + +d_game[j].players[i].throwins;
                     players[i].gamesplayed = +players[i].gamesplayed + +d_game[j].players[i].gamesplayed;
-                    console.log(d_game[j].players[i].yellowcards);
-                    console.log(players[i].yellowcards);
                 }
-            }
-            
-            console.log(players[i]);
-            
+            }            
             d_players[i] = players[i];
             
             docRef.set({
@@ -836,14 +801,6 @@ function loadPlayerProfile(){
     .catch(function(error){
         console.log("error: " + error);
     }); 
-    
-    /*
-    var str = players[i].firstname + " " + players[i].lastname + " #" + players[i].jersey;
-
-    document.getElementById('playerName').innerHTML = str;
-    document.getElementById('playerPosition').innerHTML = players[i].position;
-    */
-
 }
 
 //LOAD PLAYER STATS FOR EACH GAME
@@ -857,7 +814,6 @@ function loadEditStats(){
         if(doc && doc.exists){
             const myData = doc.data();
             var games = myData.games;
-            console.log(games);
             
             document.getElementById('player_info').innerHTML = "<h2><img class='player_img' src='" + games[i].players[ind].profile_picture + "' alt='Temporary Player's Picture'></h2><h4>" + games[i].players[ind].fullname + "</h4><h4>" + games[i].players[ind].dateOfBirth + "</h4><h4>" + games[i].players[ind].position + "</h4><h4> captain: " + games[i].players[ind].captain + "</h4>";
 
@@ -898,7 +854,7 @@ function saveEditStats(){
     var n_throwins = document.getElementById('throwins').value;
     var n_gamesplayed = document.getElementById('gamesplayed').value;
     
-    var ind = localStorage.getItem('stored_player_index');
+    // Grabbing previous stored player stats and storing in variable
     var players = JSON.parse(localStorage.getItem('stored_players'));
     players[ind].goals = n_goals;
     players[ind].fouls = n_fouls;
@@ -911,14 +867,16 @@ function saveEditStats(){
     players[ind].throwins = n_throwins;
     players[ind].gamesplayed = n_gamesplayed;
 
+    // If one of the form fields is empty, alert error
     if(n_goals == '' || n_fouls == '' || n_yellowcards == '' || n_redcards == '' || n_shots =='' || n_cornerkicks =='' || n_goalkicks == '' || n_penaltykicks == ''|| n_throwins == '' || n_gamesplayed == ''){
         alert("All fields must be filled");
     }else{
+        // Getting info from Firestore
         docRef.get().then(function(doc){
             if(doc && doc.exists){
                 const myData = doc.data();
                 var games = myData.games;
-                console.log(games);
+                // Updating the player information from edit into firestore
                 games[i].players[ind].goals = n_goals;
                 games[i].players[ind].fouls = n_fouls;
                 games[i].players[ind].yellowcards = n_yellowcards;
@@ -936,7 +894,6 @@ function saveEditStats(){
                     players: myData.players,
                     teamName: localStorage.getItem('stored_teamname')                    
                 }).then(function(){
-                    console.log("players stats updated!");
                     window.location = 'game.html';
                 })          
             }
@@ -950,7 +907,6 @@ function saveEditStats(){
 
 /* Loads all player stats on live game page */
 function loadGame(){
-    var players = JSON.parse(localStorage.getItem('stored_players'));
     var el = document.getElementById("game_list");
     
     var docRef = db.collection('users').doc(localStorage.getItem('uid'));
@@ -961,8 +917,8 @@ function loadGame(){
         if(doc && doc.exists){
             const myData = doc.data();
             var games = myData.games;
-            console.log(games);
 
+            // Loading game information at the top of the page
             document.getElementById('game_info').innerHTML = "<h4>" + games[ind].date + "," +games[ind].time + "</h4><h4>" + games[ind].location + " (" + games[ind].status + ")" + "</h4><h4>" 
                 + "My Team vs." + games[ind].opponent + "</h4>";
         }
@@ -971,14 +927,13 @@ function loadGame(){
         console.log("error: " + error);
     });
     
-    
+    // Grabbing existing data from firestore
     docRef.get().then(function(doc){
         if(doc && doc.exists){
             const myData = doc.data();
             var games = myData.games;
-            console.log(games);
-            console.log(games[ind].players);
-            
+
+            // Displaying each players' individual stats for that particular game
             for(var i = 0; i < games[ind].players.length; i++){
                 var str = "<tr>" + 
                     "<td class='headcol'><p onclick='player_index(this)'>" + games[ind].players[i].firstname + " " + games[ind].players[i].lastname + "</p></td>" + 
@@ -1001,45 +956,20 @@ function loadGame(){
     .catch(function(error){
         console.log("error: " + error);
     });
-
-    /*
-    // loop through every player, display live stats
-    for(var i = 0; i < players.length; i++){
-        var str = "<tr>" + 
-            "<td class='headcol'><p onclick='player_index(this)'>" + players[i].firstname + " " + players[i].lastname + "</p></td>" + 
-            "<td>" + players[i].goals + "</td>" + 
-            "<td>" + players[i].fouls + "</td>" + 
-            "<td>" + players[i].yellowcards + "</td>" + 
-            "<td>" + players[i].redcards + "</td>" + 
-            "<td>" + players[i].shots + "</td>" + 
-            "<td>" + players[i].cornerkicks + "</td>" + 
-            "<td>" + players[i].goalkicks + "</td>" + 
-            "<td>" + players[i].penaltykicks + "</td>" + 
-            "<td>" + players[i].throwins + "</td>" + 
-            "<td>" + players[i].gamesplayed + "</td>" + 
-            "</tr>";
-
-        el.innerHTML += str;
-    }
-    */
 }
-
 /*
     * Function for image
+    * Gets 64 bit image file and parses to image store and display
 */
 function getBase64(file) {
     var reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function () {
-        //console.log(reader.result);
         localStorage.setItem('imgData', reader.result);
-        //aalert(localStorage.getItem('imgData'));
     };
-    // reader.onerror = function (error) {
-    //     console.log('Error: ', error);
-    // };
 }
 
+/* Helper function to go to previous page */
 function goBack() {
     window.history.back();
 }
