@@ -225,7 +225,8 @@ function addGame(){
                 // updating firestore database
                 docRef.set({
                     games: _games,
-                    players: myData.players
+                    players: myData.players,
+                    teamName: localStorage.getItem('stored_teamname')                    
                 }).then(function(){
                     console.log("game successfully added!");
                     window.location = 'schedule.html';
@@ -379,7 +380,8 @@ function saveGame(){
                 // updating firestore database
                 docRef.set({
                     games: stored_games,
-                    players: myData.players
+                    players: myData.players,
+                    teamName: localStorage.getItem('stored_teamname')
                 }).then(function(){
                     console.log("game successfully edited!");
                     window.location = 'schedule.html';
@@ -424,7 +426,8 @@ function deleteGame(){
             // updating firestore database
             docRef.set({
                 games: stored_games,
-                players: myData.players
+                players: myData.players,
+                teamName: localStorage.getItem('stored_teamname')                
             }).then(function(){
                 console.log("game successfully deleted!");
             });
@@ -505,7 +508,8 @@ function addPlayer(){
             // updating firestore database
             docRef.set({
                 games: myData.games,	
-                players: players
+                players: players,
+                teamName: localStorage.getItem('stored_teamname')                
             }).then(function(){
                 console.log("player successfully added!");
                 window.location = 'players.html';
@@ -567,7 +571,8 @@ function deletePlayer(r){
             // updating firestore database
             docRef.set({
                 games: myData.games,
-                players: players
+                players: players,
+                teamName: localStorage.getItem('stored_teamname')                
             }).then(function(){
                 console.log("player successfully deleted!");
             });
@@ -690,7 +695,8 @@ function savePlayer(){
             // updating firestore database
             docRef.set({
                 games: myData.games,
-                players: players
+                players: players,
+                teamName: localStorage.getItem('stored_teamname')                
             }).then(function(){
                 console.log("player successfully edited!");
                 window.location = "players.html";
@@ -807,7 +813,8 @@ function loadPlayerProfile(){
             
             docRef.set({
                 games: d_game,
-                players: d_players
+                players: d_players,
+                teamName: localStorage.getItem('stored_teamname')                
             }).then(function(){
                     var body_str = "<tr>" + 
                     "<td>" + players[i].goals + "</td>" + 
@@ -926,7 +933,8 @@ function saveEditStats(){
                 // filling placeholder values with current values
                 docRef.set({
                     games: games,
-                    players: myData.players
+                    players: myData.players,
+                    teamName: localStorage.getItem('stored_teamname')                    
                 }).then(function(){
                     console.log("players stats updated!");
                     window.location = 'game.html';
