@@ -34,6 +34,8 @@ function loadNav(){
     el.innerHTML += team_name;
 }
 
+/* Function to for the login to the application*/
+
 function login(){
     var email = document.getElementById("username").value;
     var password = document.getElementById("password").value;
@@ -61,6 +63,7 @@ function login(){
 
 
 /* function to sign out*/
+
 function signout(){
     firebase.auth().signOut().then(function() {
         alert("Sign-out successful");
@@ -125,6 +128,8 @@ function signUp(){
         });
     }
 }
+
+/*Function to register team's name and logo*/
 
 function signTeam(){
     var _teamName = document.getElementById('sign_teamName').value;
@@ -838,6 +843,8 @@ function loadPlayerProfile(){
 
 //LOAD PLAYER STATS FOR EACH GAME
 
+/*Function to load the stats from player in order to edit*/
+
 function loadEditStats(){
     var i = localStorage.getItem('index');
     var ind = localStorage.getItem('stored_player_index');
@@ -870,6 +877,8 @@ function loadEditStats(){
 
     
 }
+
+/*Function to save the stats from editing page on stats*/
 
 function saveEditStats(){
     var ind = localStorage.getItem('stored_player_index');
@@ -940,6 +949,7 @@ function saveEditStats(){
 
 
 /* Loads all player stats on live game page */
+
 function loadGame(){
     var el = document.getElementById("game_list");
     
