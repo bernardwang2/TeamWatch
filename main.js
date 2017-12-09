@@ -49,37 +49,14 @@ function login(){
         // if user document already exists, do nothing
         docRef.get().then(function(doc){
             if(doc.exists){
-                //change5
-                const myData = doc.data();
-                console.log('already exists');
+                var myData = doc.data();
+                localStorage.setItem('stored_teamname', myData.teamName);
                 localStorage.setItem('uid', user.uid);
-                console.log("Document successfully written!");
+  
                 window.location = 'home.html';
             }
-            else{
-                db.collection('users').doc(user.uid).set({
-                    //change5
-                    team: myData.team,
-                    players: [],
-                    games: []
-                })
-                .then(function(){
-                    localStorage.setItem('uid', user.uid);
-                    console.log("Document successfully written!");
-                    window.location = 'home.html';
-                })
-                .catch(function(error){
-                    console.error("Error writing document: ", error);
-                    return false;
-                });
-            }
-
-            //console.log(curr_user);
         })
-        // create new user document with empty player/game arrays
-        // using generated uid from firebase
     });
-    console.log(firebase.auth().currentUser);
 }
 
 
@@ -163,18 +140,16 @@ function signTeam(){
         alert("All fields must be filled");
     }else{
         docRef.get().then(function(doc){
-            var new_team ={
-                teamLogo: img_data,
-                teamName: _teamName
-            };
-            
+
             db.collection('users').doc(localStorage.getItem('uid')).set({
-                team: new_team,
+                teamName: _teamName,
                 players: [],
                 games: []
             })
             .then(function(){
-                console.log("successfully added teamname");
+                localStorage.setItem('stored_teamname', _teamName);
+                localStorage.setItem('stored_teamlogo', img_data);
+
                 window.location = 'index.html';
             })
             .catch(function(error){
@@ -728,8 +703,8 @@ function loadHome(){
         if(doc && doc.exists){
             const myData = doc.data();
 
-            var team_name = myData.team.teamName;
-            var team_photo = myData.team.teamLogo;
+            var team_name = localStorage.getItem('stored_teamname');
+            var team_photo = localStorage.getItem('stored_teamlogo');
             console.log(team_name);
             document.getElementById('team_name_id').innerHTML = "<h3>" + team_name + "</h3><img class='team_logo' src='" + team_photo + "' alt='team'>";
 
