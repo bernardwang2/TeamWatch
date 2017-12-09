@@ -52,7 +52,7 @@ function login(){
         docRef.get().then(function(doc){
             if(doc.exists){
                 var myData = doc.data();
-                localStorage.setItem('stored_teamname', str);
+                localStorage.setItem('stored_teamname', myData.teamName);
                 localStorage.setItem('uid', user.uid);
                 console.log("Document successfully written!");
                 window.location = 'home.html';
