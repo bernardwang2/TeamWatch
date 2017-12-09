@@ -142,6 +142,7 @@ function signTeam(){
         docRef.get().then(function(doc){
 
             db.collection('users').doc(localStorage.getItem('uid')).set({
+                teamLogo: img_data,
                 teamName: _teamName,
                 players: [],
                 games: []
@@ -220,6 +221,7 @@ function addGame(){
 
                 // updating firestore database
                 docRef.set({
+                    teamLogo: myData.teamLogo,
                     games: _games,
                     players: myData.players,
                     teamName: localStorage.getItem('stored_teamname')                    
@@ -369,6 +371,7 @@ function saveGame(){
                 stored_games[ind].players = myData.games[ind].players;
                 // updating firestore database
                 docRef.set({
+                    teamLogo: myData.teamLogo,
                     games: stored_games,
                     players: myData.players,
                     teamName: localStorage.getItem('stored_teamname')
@@ -414,6 +417,7 @@ function deleteGame(){
             const myData = doc.data();
             // updating firestore database
             docRef.set({
+                teamLogo: myData.teamLogo,
                 games: stored_games,
                 players: myData.players,
                 teamName: localStorage.getItem('stored_teamname')                
@@ -493,6 +497,7 @@ function addPlayer(){
 
             // updating firestore database
             docRef.set({
+                teamLogo: myData.teamLogo,
                 games: myData.games,	
                 players: players,
                 teamName: localStorage.getItem('stored_teamname')                
@@ -554,6 +559,7 @@ function deletePlayer(r){
             const myData = doc.data();
             // updating firestore database
             docRef.set({
+                teamLogo: myData.teamLogo,
                 games: myData.games,
                 players: players,
                 teamName: localStorage.getItem('stored_teamname')                
@@ -678,6 +684,7 @@ function savePlayer(){
             const myData = doc.data();
             // updating firestore database
             docRef.set({
+                teamLogo: myData.teamLogo,
                 games: myData.games,
                 players: players,
                 teamName: localStorage.getItem('stored_teamname')                
@@ -704,7 +711,7 @@ function loadHome(){
             const myData = doc.data();
 
             var team_name = localStorage.getItem('stored_teamname');
-            var team_photo = localStorage.getItem('stored_teamlogo');
+            var team_photo = myData.teamLogo;
             console.log(team_name);
             document.getElementById('team_name_id').innerHTML = "<h3>" + team_name + "</h3><img class='team_logo' src='" + team_photo + "' alt='team'>";
 
@@ -801,6 +808,7 @@ function loadPlayerProfile(){
             d_players[i] = players[i];
             
             docRef.set({
+                teamLogo: myData.teamLogo,
                 games: d_game,
                 players: d_players,
                 teamName: localStorage.getItem('stored_teamname')                
@@ -914,6 +922,7 @@ function saveEditStats(){
                                
                 // filling placeholder values with current values
                 docRef.set({
+                    teamLogo: myData.teamLogo,
                     games: games,
                     players: myData.players,
                     teamName: localStorage.getItem('stored_teamname')                    
