@@ -256,10 +256,15 @@ function showSchedule(){
             var games = myData.games;
             console.log(games);
 
-            for(var i = 0; i < games.length; i++){
-                var str = "<li><img src='img/trash.png' alt='delete' class='delete' onclick='deleteGame()'><a href='game.html' onclick='detailGame()'>" + games[i].date + " - My Team vs. " + games[i].opponent + "</a><img src='img/edit.png' alt='edit' class='edit' onclick='editGame()'></li>"
-                document.getElementById("game_list").innerHTML += str;
+            if(games.length != 0){
+                for(var i = 0; i < games.length; i++){
+                    var str = "<li><img src='img/trash.png' alt='delete' class='delete' onclick='deleteGame()'><a href='game.html' onclick='detailGame()'>" + games[i].date + " - My Team vs. " + games[i].opponent + "</a><img src='img/edit.png' alt='edit' class='edit' onclick='editGame()'></li>"
+                    document.getElementById("game_list").innerHTML += str;
+                }
+            }else{
+                document.getElementById("no_games").innerHTML += "<br><h4>No games yet! Add a game with the + button</h4>";
             }
+            
         }
     })
     .catch(function(error){
@@ -532,7 +537,7 @@ function showPlayer(){
                     document.getElementById("players_list").innerHTML += str;
                 }
             }else{
-                document.getElementById("players_list").innerHTML += "<br><h4>No players yet! Add a player with the + button</h4>";
+                document.getElementById("no_players").innerHTML += "<br><h4>No players yet! Add a player with the + button</h4>";
             }
         }
     })
