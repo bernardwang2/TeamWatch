@@ -14,14 +14,14 @@
 <body>
     <h1 class="title_text">Sign Up</h1>
     <form method="post" name="sign_form" id="sign_form" class="text-center">
-        <h3 style="margin-top: 10vh">What's your team name?</h3>
-        <input type="text" name="firstName" id="sign_teamName" placeholder="Team Name" class="form-control">
-
         <h3>Add your team picture!</h3><br>
         <div class="form-group" style="align-content:center;">
             <input type='file' id="upload_image"/><br>
             <button id="button_confirm">confirm</button>   
         </div>
+        <h3 style="margin-top: 10vh">What's your team name?</h3>
+        <input type="text" name="firstName" id="sign_teamName" placeholder="Team Name" class="form-control">
+
         <br>
 
         <a type="button" class="btn btn-primary" value="Submit" id ="submit" onclick="signTeam()">Submit</a>
@@ -37,7 +37,14 @@
                 </span>
             </div>
     </footer>
-    
+    <script>
+        document.getElementById('button_confirm').addEventListener('click', function() {
+        var files = document.getElementById('upload_image').files;
+            if (files.length > 0) {
+                getBase64(files[0]);
+            }
+        });
+    </script>
     <script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/4.7.0/firebase-firestore.js"></script>
 	<script src="main.js"></script>

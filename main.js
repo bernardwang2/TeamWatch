@@ -49,14 +49,37 @@ function login(){
         // if user document already exists, do nothing
         docRef.get().then(function(doc){
             if(doc.exists){
-                var myData = doc.data();
-                localStorage.setItem('stored_teamname', myData.teamName);
+                //change5
+                const myData = doc.data();
+                console.log('already exists');
                 localStorage.setItem('uid', user.uid);
+                console.log("Document successfully written!");
                 window.location = 'home.html';
             }
+            else{
+                db.collection('users').doc(user.uid).set({
+                    //change5
+                    team: myData.team,
+                    players: [],
+                    games: []
+                })
+                .then(function(){
+                    localStorage.setItem('uid', user.uid);
+                    console.log("Document successfully written!");
+                    window.location = 'home.html';
+                })
+                .catch(function(error){
+                    console.error("Error writing document: ", error);
+                    return false;
+                });
+            }
+
+            //console.log(curr_user);
         })
-        
+        // create new user document with empty player/game arrays
+        // using generated uid from firebase
     });
+    console.log(firebase.auth().currentUser);
 }
 
 
@@ -130,17 +153,28 @@ function signTeam(){
     var _teamName = document.getElementById('sign_teamName').value;
     var docRef = db.collection('users').doc(localStorage.getItem('uid'));
     
+    var img_data = localStorage.getItem('imgData');
+    localStorage.removeItem("imgData");
+    if(img_data === null){
+        img_data = "img/team_logo.jpg";
+    }
+    
     if(_teamName == ''){
         alert("All fields must be filled");
     }else{
         docRef.get().then(function(doc){
+            var new_team ={
+                teamLogo: img_data,
+                teamName: _teamName
+            };
+            
             db.collection('users').doc(localStorage.getItem('uid')).set({
-                teamName: _teamName,
+                team: new_team,
                 players: [],
                 games: []
             })
             .then(function(){
-                localStorage.setItem('stored_teamname', _teamName);
+                console.log("successfully added teamname");
                 window.location = 'index.html';
             })
             .catch(function(error){
@@ -689,6 +723,21 @@ function savePlayer(){
 function loadHome(){
     var curr_id = localStorage.getItem('uid');
     var docRef = db.collection('users').doc(curr_id);
+    
+    docRef.get().then(function(doc){
+        if(doc && doc.exists){
+            const myData = doc.data();
+
+            var team_name = myData.team.teamName;
+            var team_photo = myData.team.teamLogo;
+            console.log(team_name);
+            document.getElementById('team_name_id').innerHTML = "<h3>" + team_name + "</h3><img class='team_logo' src='" + team_photo + "' alt='team'>";
+
+        }
+    })
+    .catch(function(error){
+        console.log("error: " + error);
+    });
 
     // Grabbing games and players arrays from database
     docRef.get().then(function(doc){
