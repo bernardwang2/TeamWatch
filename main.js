@@ -132,6 +132,7 @@ function signTeam(){
     
     var img_data = localStorage.getItem('imgData');
     localStorage.removeItem("imgData");
+    
     if(img_data === null){
         img_data = "img/team_logo.jpg";
     }
@@ -729,7 +730,7 @@ function loadHome(){
             // User games and players in localstorage
             localStorage.setItem('stored_games', JSON.stringify(myData.games));
             localStorage.setItem('stored_players', JSON.stringify(myData.players));
-            localStorage.setItem('stored_teamname', JSON.stringify(myData.teamName));
+            localStorage.setItem('stored_teamname', myData.teamName);
 
             // Get today's date
             var today = new Date();
